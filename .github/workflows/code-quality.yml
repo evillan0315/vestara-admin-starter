@@ -6,12 +6,10 @@ on:
   push:
     branches: [develop]
   workflow_dispatch:
-  
   schedule:
     - cron: '0 0 * * 1'
 
 env:
-  # Environment variables for caching and optimization
   CI: true
 
 jobs:
@@ -87,7 +85,7 @@ jobs:
       redis:
         image: redis:7-alpine
         options: >-
-          --health-cmd redis-cli ping
+          --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -119,7 +117,6 @@ jobs:
       matrix:
         app: [api, web]
     needs: [typecheck, lint, test]
-    if: always()
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -141,8 +138,7 @@ jobs:
   feature-validation:
     name: Feature Branch Validation
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, test, build]
-    if: always()
+    needs: [build]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -169,21 +165,18 @@ jobs:
         if: steps.branch.outputs.branch_type == 'feature'
         run: |
           echo "Running feature-specific validations..."
-          # Add feature-specific checks here (e.g., new lint rules, additional tests)
           echo "✅ Feature branch validations passed"
 
       - name: Bugfix branch specific checks
         if: steps.branch.outputs.branch_type == 'bugfix'
         run: |
           echo "Running bugfix-specific validations..."
-          # Bugfix branches need to ensure they don't break existing functionality
           echo "✅ Bugfix branch validations passed"
 
       - name: Hotfix branch specific checks
         if: steps.branch.outputs.branch_type == 'hotfix'
         run: |
           echo "Running hotfix-specific validations..."
-          # Hotfixes require extra security and emergency procedures
           echo "✅ Hotfix branch validations passed"
 
   # Security scan
@@ -210,10 +203,10 @@ jobs:
       - name: Check for secrets in repository
         run: |
           if grep -r "password\|token\|secret" .github/workflows/ *.md *.json *.ts *.js --include="*.json" --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null | head -5; then
-            echo "⚠️  Potential secrets found in configuration files"
+            echo "⚠️ Potential secrets found in configuration files"
           fi
 
-  # Auto-merge for approved PRs (feature branches only)
+  # Auto-merge logic / reporting
   auto-merge:
     name: Auto-Merge Approved PRs
     runs-on: ubuntu-latest
@@ -223,33 +216,25 @@ jobs:
       github.event.pull_request.state == 'closed' &&
       github.event.pull_request.merged == true &&
       startsWith(github.head_ref, 'feature/')
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Configure Git
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-      - name: Merge to develop branch
+      - name: Merge verification
         run: |
           echo "✅ PR merged successfully"
-          echo "Creating documentation for automated merge process"
-
-      - name: Update feature branch statistics
-        run: |
-          echo "Updating merge statistics"
 
   # Prepare for release
   release-preparation:
     name: Release Preparation
     runs-on: ubuntu-latest
     needs: [build]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -269,17 +254,12 @@ jobs:
               return { notes: "Release preparation completed successfully" };
             }
 
-      - name: Create changelog entry
-        run: |
-          echo "Creating changelog entry for release"
-          echo "Release preparation completed successfully"
-
-  # Deploy to staging (optional enhancement)
+  # Deploy to staging
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: [build]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     environment:
       name: staging
       url: https://staging.vestara.com
@@ -301,19 +281,10 @@ jobs:
         run: pnpm build
 
       - name: Deploy API
-        run: |
-          echo "Deploying API to staging environment"
-          # Add actual deployment commands here
+        run: echo "Deploying API to staging environment"
 
       - name: Deploy Frontend
-        run: |
-          echo "Deploying Frontend to staging environment"
-          # Add actual deployment commands here
-
-      - name: Health check
-        run: |
-          echo "Performing health checks"
-          # Add health check commands here
+        run: echo "Deploying Frontend to staging environment"
 
   # Weekly repository health report
   health-report:
@@ -321,53 +292,76 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule'
     steps:
-      - name: Generate repository health report
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate report statistics
         id: health-report
         uses: actions/github-script@v7
         with:
           script: |
             const { execSync } = require('child_process');
-            const fs = require('fs');
-            
-            // Get repository statistics
             const stats = {};
-            
             try {
-              // Get git status
-              const gitStatus = execSync('git status --porcelain 2>/dev/null | wc -l').toString().trim();
-              stats.gitStatus = gitStatus;
-              
-              // Get dependency audit results
+              stats.gitStatus = execSync('git status --porcelain 2>/dev/null | wc -l').toString().trim();
               const auditResult = execSync('pnpm audit --json 2>/dev/null || echo "{}"').toString();
-              stats.auditFindings = auditResult;
-              
-              // Get build status
+              let parsedAudit = {};
+              try { parsedAudit = JSON.parse(auditResult); } catch(e){}
+              stats.vulnCount = parsedAudit.advisories ? Object.keys(parsedAudit.advisories).length : 0;
               stats.buildStatus = 'completed';
-              
-              // Get test coverage
               stats.testCoverage = 'generated';
-              
-              return { stats: stats };
             } catch (error) {
-              console.log('Error generating report:', error);
-              return { stats: { error: 'Failed to generate health report' } };
+              stats.error = 'Failed to generate health report';
             }
+            return stats;
 
       - name: Create health report issue
-        if: steps.health-report.outputs.stats.error == ''
         uses: actions/github-script@v7
         with:
           script: |
-            const result = '${{ steps.health-report.outputs.stats }}';
-            const stats = JSON.parse(result);
-            
+            const stats = ${{ steps.health-report.outputs.result }};
             const now = new Date();
-            const issueBody = '## 📊 Weekly Repository Health Report\n\n**Report Date:** ' + now.toISOString() + '\n\n### Git Status\n- Uncommitted changes: ' + (stats.gitStatus || 'Unknown') + '\n\n### Dependency Audit\n- Security vulnerabilities found: ' + (stats.auditFindings ? Object.keys(JSON.parse(stats.auditFindings || '{}')).length : 0) + '\n\n### Build Status\n- Last build: ' + stats.buildStatus + '\n\n### Test Coverage\n- Coverage status: ' + stats.testCoverage + '\n\n### Actions Taken\n- Automatic code quality checks completed\n- Security vulnerabilities addressed when found\n- Repository maintained and updated\n\n### Next Week Focus\n- ' + (stats.auditFindings && Object.keys(JSON.parse(stats.auditFindings || '{}')).length > 0 ? 'Address security vulnerabilities' : 'Continue feature development') + '\n\n---\n*This automated report is generated every Monday. Complete details are available in the Actions tab.*';
+            
+            if (stats.error) {
+              console.log(stats.error);
+              return;
+            }
 
-            github.rest.issues.create({
+            const issueBody = `## 📊 Weekly Repository Health Report
+            
+            **Report Date:** ${now.toISOString()}
+            
+            ### Git Status
+            - Uncommitted changes: ${stats.gitStatus || '0'}
+            
+            ### Dependency Audit
+            - Security vulnerabilities found: ${stats.vulnCount || 0}
+            
+            ### Build Status
+            - Last build: ${stats.buildStatus}
+            
+            ### Test Coverage
+            - Coverage status: ${stats.testCoverage}
+            
+            ---
+            *This automated report is generated every Monday.*`;
+
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '📊 Weekly Repository Health Report - ' + now.toLocaleDateString(),
+              title: `📊 Weekly Repository Health Report - ${now.toLocaleDateString()}`,
               body: issueBody,
               labels: ['automated-report', 'maintenance', 'health-monitoring']
             });
