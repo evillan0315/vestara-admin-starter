@@ -6,6 +6,9 @@ on:
   push:
     branches: [develop]
   workflow_dispatch:
+  
+  schedule:
+    - cron: '0 0 * * 1'
 
 env:
   # Environment variables for caching and optimization
@@ -316,8 +319,7 @@ jobs:
   health-report:
     name: Weekly Repository Health Report
     runs-on: ubuntu-latest
-    schedule:
-      - cron: '0 0 * * 1'  # Every Monday at midnight
+    if: github.event_name == 'schedule'
     steps:
       - name: Generate repository health report
         id: health-report
