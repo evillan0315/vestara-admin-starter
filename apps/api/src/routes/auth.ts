@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUserRequestDTO, LoginRequestDTO, AuthResponseDTO, UserDTO } from '@vestara/types';
+import {  AuthResponseDTO } from '@vestara/types';
 import { createUserSchema, loginSchema } from '@vestara/validation';
 import { authService } from '../services/index.js';
 import { JwtService } from '../utils/jwt.js';

@@ -31,7 +31,7 @@ export class JwtService {
     try {
       const decoded = jwt.verify(token, config.jwt.secret as string) as JwtPayload;
       return { id: decoded.id };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -43,7 +43,7 @@ export class JwtService {
     try {
       const decoded = jwt.verify(token, config.jwt.refreshSecret as string) as JwtPayload;
       return { id: decoded.id };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

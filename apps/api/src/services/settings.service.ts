@@ -1,4 +1,4 @@
-import type { AuditAction, UserRole } from '@vestara/types';
+import type {  UserRole } from '@vestara/types';
 import { settingsRepository, auditLogRepository } from '../repositories/index.js';
 
 export class SettingsService {
