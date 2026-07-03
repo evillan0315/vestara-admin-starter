@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import type { UserRole } from '@prisma/client';
+import type { UserRole } from '@vestara/types';
 import { JwtService } from '../utils/jwt.js';
 import { ConflictError, UnauthorizedError } from '../utils/errors.js';
 import { userRepository, sessionRepository, refreshTokenRepository, auditLogRepository } from '../repositories/index.js';
