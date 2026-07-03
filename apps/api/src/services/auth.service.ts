@@ -84,17 +84,17 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     const refreshTokenRecord = await refreshTokenRepository.findByToken(refreshToken);
     if (!refreshTokenRecord || refreshTokenRecord.revokedAt) {
-      throw errors.Unauthorized('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
+      throw new UnauthorizedError('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
     }
 
     const tokenUser = JwtService.validateRefreshToken(refreshToken);
     if (!tokenUser) {
-      throw errors.Unauthorized('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
+      throw new UnauthorizedError('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
     }
 
     const user = await userRepository.findByIdOrThrow(tokenUser.id);
     if (!user.isActive) {
-      throw errors.Unauthorized('User account is inactive', 'AUTH_USER_INACTIVE');
+      throw new UnauthorizedError('User account is inactive', 'AUTH_USER_INACTIVE');
     }
 
     const tokens = await this.generateTokens(user.id);

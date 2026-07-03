@@ -97,6 +97,7 @@ export interface RegisterRequestDTO {
   password: string;
   firstName: string;
   lastName: string;
+  role?: UserRole; // Optional for self-registration, required for admin registration
 }
 
 export interface AuthResponseDTO {

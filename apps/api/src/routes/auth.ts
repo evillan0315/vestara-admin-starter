@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUserRequestDTO, LoginRequestDTO } from '@vestara/types';
+import { CreateUserRequestDTO, LoginRequestDTO, AuthResponseDTO } from '@vestara/types';
 import { authService } from '../services/index.js';
 import { JwtService } from '../utils/jwt.js';
 import { userRepository } from '../repositories/index.js';
@@ -12,17 +12,19 @@ const router = Router();
  */
 router.post('/register', validate(CreateUserRequestDTO), async (req, res, next) => {
   try {
-    const result = await authService.register(req.body);
+    const authResult = await authService.register(req.body);
+    // Create AuthResponseDTO from auth result
+    const response: AuthResponseDTO = {
+      user: authResult.user,
+      tokens: {
+        accessToken: authResult.accessToken,
+        refreshToken: authResult.refreshToken,
+        expiresIn: 3600, // or calculate based on token expiration
+      },
+    };
     res.status(201).json({
       success: true,
-      data: {
-        user: result.user,
-        tokens: {
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-          expiresIn: result.expiresIn,
-        },
-      },
+      data: response,
     });
   } catch (error) {
     next(error);
@@ -35,22 +37,24 @@ router.post('/register', validate(CreateUserRequestDTO), async (req, res, next) 
 router.post('/login', validate(LoginRequestDTO), async (req, res, next) => {
   try {
     const { ipAddress, userAgent, ...loginData } = req.body;
-    const result = await authService.login({
+    const authResult = await authService.login({
       ...loginData,
       ipAddress: ipAddress || req.ip || undefined,
       userAgent: userAgent || req.get('User-Agent') || undefined,
     });
 
+    // Create AuthResponseDTO from auth result
+    const response: AuthResponseDTO = {
+      user: authResult.user,
+      tokens: {
+        accessToken: authResult.accessToken,
+        refreshToken: authResult.refreshToken,
+        expiresIn: 3600, // or calculate based on token expiration
+      },
+    };
     res.json({
       success: true,
-      data: {
-        user: result.user,
-        tokens: {
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-          expiresIn: result.expiresIn,
-        },
-      },
+      data: response,
     });
   } catch (error) {
     next(error);
