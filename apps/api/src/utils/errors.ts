@@ -119,3 +119,9 @@ export class InternalError extends AppError {
     this.name = 'InternalError';
   }
 }
+
+// Create a convenience namespace for backward compatibility
+export const errors = {
+  Conflict: ConflictError,
+  Unauthorized: UnauthorizedError,
+};

@@ -1,4 +1,4 @@
-import type { PaginationMeta } from '@vestara/types';
+import type { PaginationMeta, PaginationParams } from '@vestara/types';
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@vestara/constants';
 
 interface ParsedPagination {
@@ -47,4 +47,11 @@ export function buildPrismaPagination(page: number, perPage: number): { skip: nu
     skip: (page - 1) * perPage,
     take: perPage,
   };
+}
+
+export interface PaginatedResult {
+  data: unknown[];
+  page: number;
+  perPage: number;
+  total: number;
 }
