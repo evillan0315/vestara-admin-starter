@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUserRequestDTO, LoginRequestDTO, AuthResponseDTO } from '@vestara/types';
+import { type UserRole } from '@vestara/types';
+import { CreateUserRequestDTO, LoginRequestDTO, AuthResponseDTO, UserDTO } from '@vestara/types';
+import { createUserSchema, loginSchema } from '@vestara/validation';
 import { authService } from '../services/index.js';
 import { JwtService } from '../utils/jwt.js';
 import { userRepository } from '../repositories/index.js';
@@ -10,7 +12,7 @@ const router = Router();
 /**
  * POST /auth/register - Register a new user
  */
-router.post('/register', validate(CreateUserRequestDTO), async (req, res, next) => {
+router.post('/register', validate(createUserSchema), async (req, res, next) => {
   try {
     const authResult = await authService.register(req.body);
     // Create AuthResponseDTO from auth result
@@ -34,7 +36,7 @@ router.post('/register', validate(CreateUserRequestDTO), async (req, res, next) 
 /**
  * POST /auth/login - Authenticate user and get tokens
  */
-router.post('/login', validate(LoginRequestDTO), async (req, res, next) => {
+router.post('/login', validate(loginSchema), async (req, res, next) => {
   try {
     const { ipAddress, userAgent, ...loginData } = req.body;
     const authResult = await authService.login({
