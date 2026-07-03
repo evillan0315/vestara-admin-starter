@@ -319,9 +319,6 @@ jobs:
     schedule:
       - cron: '0 0 * * 1'  # Every Monday at midnight
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Generate repository health report
         id: health-report
         uses: actions/github-script@v7
@@ -359,41 +356,16 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const stats = JSON.parse(`${{ steps.health-report.outputs.stats }}`);
+            const result = '${{ steps.health-report.outputs.stats }}';
+            const stats = JSON.parse(result);
             
-            const issueBody = `
-## 📊 Weekly Repository Health Report
-
-**Report Date:** ${new Date().toISOString()}
-
-### Git Status
-- Uncommitted changes: ${stats.gitStatus || 'Unknown'}
-
-### Dependency Audit
-- Security vulnerabilities found: ${stats.auditFindings ? Object.keys(JSON.parse(stats.auditFindings || '{}')).length : 0}
-
-### Build Status
-- Last build: ${stats.buildStatus}
-
-### Test Coverage
-- Coverage status: ${stats.testCoverage}
-
-### Actions Taken
-- Automatic code quality checks completed
-- Security vulnerabilities addressed when found
-- Repository maintained and updated
-
-### Next Week Focus
-- ${stats.auditFindings && Object.keys(JSON.parse(stats.auditFindings || '{}')).length > 0 ? '- Address security vulnerabilities' : '- Continue feature development'}
-
----
-*This automated report is generated every Monday. Complete details are available in the Actions tab.*
-            `;
+            const now = new Date();
+            const issueBody = '## 📊 Weekly Repository Health Report\n\n**Report Date:** ' + now.toISOString() + '\n\n### Git Status\n- Uncommitted changes: ' + (stats.gitStatus || 'Unknown') + '\n\n### Dependency Audit\n- Security vulnerabilities found: ' + (stats.auditFindings ? Object.keys(JSON.parse(stats.auditFindings || '{}')).length : 0) + '\n\n### Build Status\n- Last build: ' + stats.buildStatus + '\n\n### Test Coverage\n- Coverage status: ' + stats.testCoverage + '\n\n### Actions Taken\n- Automatic code quality checks completed\n- Security vulnerabilities addressed when found\n- Repository maintained and updated\n\n### Next Week Focus\n- ' + (stats.auditFindings && Object.keys(JSON.parse(stats.auditFindings || '{}')).length > 0 ? 'Address security vulnerabilities' : 'Continue feature development') + '\n\n---\n*This automated report is generated every Monday. Complete details are available in the Actions tab.*';
 
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `📊 Weekly Repository Health Report - ${new Date().toLocaleDateString()}`,
+              title: '📊 Weekly Repository Health Report - ' + now.toLocaleDateString(),
               body: issueBody,
-              labels: ['automated-report', 'maintenance']
+              labels: ['automated-report', 'maintenance', 'health-monitoring']
             });
