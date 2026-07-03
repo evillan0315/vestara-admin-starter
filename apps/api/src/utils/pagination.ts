@@ -1,6 +1,6 @@
 import type { PaginationMeta, PaginationParams } from '@vestara/types';
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@vestara/constants';
-
+console.log(PaginationParams);
 interface ParsedPagination {
   page: number;
   perPage: number;
