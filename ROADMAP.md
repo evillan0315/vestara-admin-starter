@@ -18,11 +18,11 @@ This roadmap defines the GitHub-based project structure, milestone organization,
 | Phase | Focus | Items | Status |
 |-------|-------|-------|--------|
 | **1–5** | Foundation & Backend | Project Init, Shared Architecture, Database, Express Server, Auth API | ✅ Complete |
-| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial |
-| **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ❌ Not Started |
+| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial (~70%) |
+| **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ⏳ Partial (~40%) |
 | **11** | Authentication UI | Login, Register, Forgot/Reset Password, Protected Routes | ❌ Not Started |
 | **12–14** | User Management | User CRUD, Roles & Permissions, User Profile | ❌ Not Started |
-| **15–17** | Reusable UI | Forms, Data Table, Feedback Components | ❌ Not Started |
+| **15–17** | Reusable UI | Forms, Data Table, Feedback Components | ⏳ Partial (~60%) |
 | **18** | File Management | File Manager | ❌ Not Started |
 | **19** | Settings | Application Settings | ⏳ Partial |
 | **20** | Reporting | Dashboard Reports, CSV/Excel/PDF Export | ❌ Not Started |
@@ -317,8 +317,8 @@ Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `doc
 | 4 | Express Server | ✅ Complete | 100% | Full middleware stack (CORS, security headers, body parser, request logger, validation, error handler, 404) |
 | 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging |
 | 6 | React Foundation | ✅ Complete | 100% | Vite + MUI + TanStack Query + routing + API client + auth context + route guards + feature-based module structure |
-| 7 | Design System | ⏳ Partial | ~30% | MUI light/dark themes + Tailwind integrated. **Missing:** shared layouts, reusable components, typography system |
-| 8 | Dashboard Layout | ❌ Not Started | 0% | No sidebar, header, footer, navigation, user menu, theme switcher |
+| 7 | Design System | ⏳ Partial | ~70% | MUI light/dark themes + Tailwind integrated. **Built:** Button, Input, Card, Modal, Drawer, Sidebar, Header, Footer, Toast, Loading, EmptyState. **Missing:** typography system, remaining data components |
+| 8 | Dashboard Layout | ⏳ Partial | ~40% | Sidebar (collapsible), Header (search, notifications, theme toggle, user menu), Footer, RootLayout integrated. **Missing:** data table, widgets, charts, activity feed |
 | 9 | Dashboard Widgets | ❌ Not Started | 0% | No statistics, KPI cards, charts, activity feed |
 | 10 | Dashboard Features | ❌ Not Started | 0% | No global search, notifications, preferences, audit logs UI, analytics |
 | 11 | Authentication Pages | ❌ Not Started | 0% | No login, register, forgot/reset password pages, no protected routes |
@@ -327,7 +327,7 @@ Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `doc
 | 14 | User Profile | ❌ Not Started | 0% | No profile, password, or avatar management |
 | 15 | Reusable Forms | ❌ Not Started | 0% | No reusable form components or form utilities |
 | 16 | Data Table | ❌ Not Started | 0% | No data table with sorting, filtering, pagination, selection |
-| 17 | Feedback Components | ❌ Not Started | 0% | No dialogs, drawers, toasts, loading/empty/error states |
+| 17 | Feedback Components | ⏳ Partial | ~60% | **Built:** Toast/Snackbar (with ToastProvider + useToast hook), Loading (spinner/skeleton/overlay/inline + PageLoading, ContentLoading, ButtonLoading), EmptyState (NoData, NoSearchResults, EmptyFolder, ErrorState). **Missing:** Confirmation dialogs integration, toast queue management |
 | 18 | File Manager | ❌ Not Started | 0% | No upload, browse, preview, download |
 | 19 | Application Settings | ⏳ Partial | ~50% | Backend service + repository done. Routes are commented out. No settings UI |
 | 20 | Reports | ❌ Not Started | 0% | No dashboard reports, CSV/Excel/PDF export |
