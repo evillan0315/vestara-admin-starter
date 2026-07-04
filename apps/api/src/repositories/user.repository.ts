@@ -1,4 +1,4 @@
-import type { Prisma, UserRole } from '@prisma/client';
+import type { Prisma, UserRole } from '../../../../generated/prisma/client';
 import bcrypt from 'bcryptjs';
 import { BaseRepository } from './base.repository.js';
 

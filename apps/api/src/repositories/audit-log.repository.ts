@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../../../generated/prisma/client';
 import { BaseRepository } from './base.repository.js';
 
 export class AuditLogRepository extends BaseRepository {

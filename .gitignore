@@ -36,6 +36,7 @@ coverage/
 
 # Prisma
 prisma/migrations/
+generated/
 
 # Docker
 .docker/

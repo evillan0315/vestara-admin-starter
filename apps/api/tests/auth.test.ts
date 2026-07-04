@@ -1,12 +1,14 @@
 import request from 'supertest';
 import { Server } from 'http';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../../../generated/prisma/client';
 import { hash } from 'bcryptjs';
 
 import { UserRole } from '@vestara/types';
 import { createApp } from '../src/app.js';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: `${process.env.DATABASE_URL}` });
+const prisma = new PrismaClient({ adapter });
 
 describe('Authentication API', () => {
   let server: Server;

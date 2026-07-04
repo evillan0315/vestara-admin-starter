@@ -29,8 +29,8 @@ Base URL: `/api/v1`
 |-------|------------|
 | Framework | Express.js 5 |
 | Language | TypeScript (strict mode) |
-| Database ORM | Prisma 6 |
-| Database | PostgreSQL 17 |
+| Database ORM | Prisma 7 (`prisma-client` generator with `PrismaPg` adapter) |
+| Database | Prisma Postgres (hosted PostgreSQL) |
 | Auth | JWT (access + refresh tokens) |
 | Password Hashing | bcryptjs |
 | Validation | Zod |
@@ -45,7 +45,7 @@ Base URL: `/api/v1`
 
 - Node.js 22+
 - pnpm 10+
-- PostgreSQL 17+
+- Prisma Postgres (hosted, no local PostgreSQL required)
 - Redis 8+
 
 ### Setup

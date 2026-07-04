@@ -313,7 +313,7 @@ Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `doc
 |-------|------|--------|----------|-------|
 | 1 | Project Initialization | ✅ Complete | 100% | Monorepo, Vite, React 19, Express 5, TypeScript, MUI, Tailwind v4, ESLint, Prettier, env config, path aliases |
 | 2 | Shared Architecture | ✅ Complete | 100% | `@vestara/types`, `@vestara/constants`, `@vestara/validation`, `@vestara/utils`, `@vestara/config` packages fully implemented |
-| 3 | Database | ✅ Complete | 100% | Prisma schema (User, Session, RefreshToken, AuditLog, SystemSetting), seed data |
+| 3 | Database | ✅ Complete | 100% | Prisma Postgres (hosted PostgreSQL via `prisma postgres link`). Schema: User, Session, RefreshToken, AuditLog, SystemSetting. `prisma-client` generator v7.8.0 with `PrismaPg` adapter. Seed data (4 users, 5 system settings, audit log). `lib/prisma.ts` singleton. `scripts/verify-prisma.ts` verification. |
 | 4 | Express Server | ✅ Complete | 100% | Full middleware stack (CORS, security headers, body parser, request logger, validation, error handler, 404) |
 | 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging |
 | 6 | React Foundation | ✅ Complete | 100% | Vite + MUI + TanStack Query + routing + API client + auth context + route guards + feature-based module structure |
