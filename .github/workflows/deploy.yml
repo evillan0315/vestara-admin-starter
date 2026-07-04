@@ -9,25 +9,10 @@ env:
   CI: true
 
 jobs:
-  # ── Deploy Backend to Railway ─────────────────────────
-  deploy-api:
-    name: Deploy API (Railway)
+  # ── Deploy to Vercel (Frontend + API) ──────────────────
+  deploy:
+    name: Deploy (Vercel)
     runs-on: ubuntu-latest
-    needs: []
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Railway
-        uses: bervProject/railway-deploy@main
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: vestara-api
-
-  # ── Deploy Frontend to Vercel ─────────────────────────
-  deploy-web:
-    name: Deploy Web (Vercel)
-    runs-on: ubuntu-latest
-    needs: []
     steps:
       - uses: actions/checkout@v4
 
@@ -48,7 +33,7 @@ jobs:
         env:
           DATABASE_URL: "postgresql://localhost:5432/vestara"
 
-      - name: Build
+      - name: Build Frontend
         run: pnpm turbo build --filter=@vestara/web
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
@@ -61,19 +46,6 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'
           working-directory: ./
-
-  # ── Report ───────────────────────────────────────────
-  deploy-success:
-    name: Deploy Success
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [deploy-api, deploy-web]
-    steps:
-      - name: Check deployment status
-        run: |
-          if [[ "${{ needs.deploy-api.result }}" != "success" ]] || \
-             [[ "${{ needs.deploy-web.result }}" != "success" ]]; then
-            echo "::error::One or more deployments failed"
-            exit 1
-          fi
-          echo "✅ All deployments successful"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
