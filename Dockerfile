@@ -34,8 +34,6 @@ RUN cd apps/api && npx prisma generate --schema=../../prisma/schema.prisma
 
 # ── Environment ─────────────────────────────────
 ENV NODE_ENV=production
-ENV API_PORT=5000
-ENV API_HOST=0.0.0.0
 
 EXPOSE 5000
 

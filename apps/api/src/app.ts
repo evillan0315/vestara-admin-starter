@@ -20,7 +20,7 @@ export function createApp(): express.Application {
   // CORS
   app.use(
     cors({
-      origin: process.env.VITE_API_URL || 'http://localhost:5173',
+      origin: process.env.CORS_ORIGIN || process.env.CLIENT_URL || 'http://localhost:5173',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],

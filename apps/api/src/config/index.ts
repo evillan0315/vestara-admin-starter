@@ -46,8 +46,8 @@ interface Config {
 export const config: Config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   api: {
-    port: parseInt(process.env.API_PORT || '5000', 10),
-    host: process.env.API_HOST || 'localhost',
+    port: parseInt(process.env.PORT || process.env.API_PORT || '5000', 10),
+    host: '0.0.0.0',
     url: process.env.API_URL || 'http://localhost:5000',
   },
   database: {
