@@ -1,4 +1,4 @@
-import { Prisma } from '../../../../generated/prisma/client';
+import { Prisma } from '../../../../generated/prisma/client.js';
 import { BaseRepository } from './base.repository.js';
 
 export class SettingsRepository extends BaseRepository {
