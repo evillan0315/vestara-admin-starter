@@ -15,22 +15,38 @@ This roadmap defines the GitHub-based project structure, milestone organization,
 
 ### Phase Organization
 
-| Phase | Range | Focus | Typical Branch Pattern |
-|-------|-------|-------|----------------------|
-| **Phase 1-5** | Foundation | Core Infrastructure | `feature/foundations/*` |
-| **Phase 6-10** | Admin Dashboard | UI/UX & Core Features | `feature/admin-dashboard/*` |
-| **Phase 11-12** | Authentication | Security & Auth | `feature/authentication/*` |
-| **Phase 13** | Testing & Performance | Quality & Optimization | `feature/quality/*` |
-| **Phase 14** | Production | Deployment & Ops | `feature/production/*` |
+| Phase | Focus | Items | Status |
+|-------|-------|-------|--------|
+| **1–5** | Foundation & Backend | Project Init, Shared Architecture, Database, Express Server, Auth API | ✅ Complete |
+| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial |
+| **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ❌ Not Started |
+| **11** | Authentication UI | Login, Register, Forgot/Reset Password, Protected Routes | ❌ Not Started |
+| **12–14** | User Management | User CRUD, Roles & Permissions, User Profile | ❌ Not Started |
+| **15–17** | Reusable UI | Forms, Data Table, Feedback Components | ❌ Not Started |
+| **18** | File Management | File Manager | ❌ Not Started |
+| **19** | Settings | Application Settings | ⏳ Partial |
+| **20** | Reporting | Dashboard Reports, CSV/Excel/PDF Export | ❌ Not Started |
+| **21–22** | Real-Time | WebSocket Integration, Live Features | ❌ Not Started |
+| **23–24** | Security & Monitoring | Security Hardening, Monitoring | ⏳ Partial |
+| **25–26** | Testing & Performance | Testing, Performance Optimization | ⏳ Minimal |
+| **27–30** | Production | Documentation, Deployment, CI/CD, Production Readiness | ⏳ Partial |
 
 ### GitHub Label Strategy
 
 #### 📊 **Status Labels**
-- `Phase:1-5` - Foundation work
-- `Phase:6-10` - Admin dashboard features
-- `Phase:11-12` - Authentication features
-- `Phase:13` - Testing & Quality
-- `Phase:14` - Production setup
+- `Phase:1-5` - Foundation & Backend (Complete)
+- `Phase:6-7` - Frontend Foundation
+- `Phase:8-10` - Admin Dashboard
+- `Phase:11` - Authentication UI
+- `Phase:12-14` - User Management
+- `Phase:15-17` - Reusable UI
+- `Phase:18` - File Management
+- `Phase:19` - Settings
+- `Phase:20` - Reporting
+- `Phase:21-22` - Real-Time
+- `Phase:23-24` - Security & Monitoring
+- `Phase:25-26` - Testing & Performance
+- `Phase:27-30` - Production
 
 #### 🏷️ **Type Labels**
 - `work:item:[#]` - Roadmap item tracking
@@ -263,13 +279,20 @@ Brief description of the changes including purpose, business impact, and impleme
 
 #### Feature Branches
 ```text
-feature/phase-[1-14]-
-   |__authentication
-   |__wallet
-   |__transactions
-   |__marketplace
+feature/phase-[1-30]-
+   |__foundation
+   |__backend
+   |__frontend
    |__admin-dashboard
-   |__quality
+   |__auth-ui
+   |__user-management
+   |__reusable-ui
+   |__file-manager
+   |__settings
+   |__reporting
+   |__real-time
+   |__security-monitoring
+   |__testing-performance
    |__production
 ```
 
@@ -282,18 +305,42 @@ feature/phase-[1-14]-
 
 ## 📊 Progress Tracking
 
-### GitHub Projects Summary
+### Phase Status Reference
 
-| Phase | Status | Progress | Items (Total/Completed) | Notes |
-|-------|--------|----------|-------------------------|-------|
-| 1 | ✅ Complete | 100% | [ ] | Foundation established |
-| 2 | ✅ Complete | 100% | [ ] | Shared architecture ready |
-| 3 | ✅ Complete | 100% | [ ] | Database configured |
-| 4 | ✅ In Progress | [ ]% | [#] ([#]) | Express server being built |
-| 5 | ✅ Complete | 100% | [ ] | Authentication deployed |
-| 6 | ⏳ Planned | 0% | [#] ([#]) | React foundation setup |
-| 7 | ⏳ Planned | 0% | [#] ([#]) | UI/UX design system |
-| ... | ... | ... | ... | ... |
+Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `docs/api/README.md` for API endpoint details.
+
+| Phase | Name | Status | Progress | Notes |
+|-------|------|--------|----------|-------|
+| 1 | Project Initialization | ✅ Complete | 100% | Monorepo, Vite, React 19, Express 5, TypeScript, MUI, Tailwind v4, ESLint, Prettier, env config, path aliases |
+| 2 | Shared Architecture | ✅ Complete | 100% | `@vestara/types`, `@vestara/constants`, `@vestara/validation`, `@vestara/utils`, `@vestara/config` packages fully implemented |
+| 3 | Database | ✅ Complete | 100% | Prisma schema (User, Session, RefreshToken, AuditLog, SystemSetting), seed data |
+| 4 | Express Server | ✅ Complete | 100% | Full middleware stack (CORS, security headers, body parser, request logger, validation, error handler, 404) |
+| 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging |
+| 6 | React Foundation | ⏳ Partial | ~40% | Vite + MUI + TanStack Query + routing + API client exist. **Missing:** route guards, auth context, feature-based modules |
+| 7 | Design System | ⏳ Partial | ~30% | MUI light/dark themes + Tailwind integrated. **Missing:** shared layouts, reusable components, typography system |
+| 8 | Dashboard Layout | ❌ Not Started | 0% | No sidebar, header, footer, navigation, user menu, theme switcher |
+| 9 | Dashboard Widgets | ❌ Not Started | 0% | No statistics, KPI cards, charts, activity feed |
+| 10 | Dashboard Features | ❌ Not Started | 0% | No global search, notifications, preferences, audit logs UI, analytics |
+| 11 | Authentication Pages | ❌ Not Started | 0% | No login, register, forgot/reset password pages, no protected routes |
+| 12 | User CRUD | ❌ Not Started | 0% | Backend repository exists but routes are not wired. No frontend. |
+| 13 | Roles & Permissions | ❌ Not Started | 0% | UserRole enum defined. No role/permission management UI or API |
+| 14 | User Profile | ❌ Not Started | 0% | No profile, password, or avatar management |
+| 15 | Reusable Forms | ❌ Not Started | 0% | No reusable form components or form utilities |
+| 16 | Data Table | ❌ Not Started | 0% | No data table with sorting, filtering, pagination, selection |
+| 17 | Feedback Components | ❌ Not Started | 0% | No dialogs, drawers, toasts, loading/empty/error states |
+| 18 | File Manager | ❌ Not Started | 0% | No upload, browse, preview, download |
+| 19 | Application Settings | ⏳ Partial | ~50% | Backend service + repository done. Routes are commented out. No settings UI |
+| 20 | Reports | ❌ Not Started | 0% | No dashboard reports, CSV/Excel/PDF export |
+| 21 | WebSocket Integration | ❌ Not Started | 0% | No WebSocket support |
+| 22 | Live Features | ❌ Not Started | 0% | No live notifications, dashboard updates, presence |
+| 23 | Security | ⏳ Partial | ~40% | Security headers, CORS, JWT auth, validation, audit trail exist. **Missing:** rate limiting, CSRF, password policies, XSS protection |
+| 24 | Monitoring | ⏳ Partial | ~30% | Audit trail service + request logging exist. **Missing:** error tracking, performance metrics |
+| 25 | Testing | ⏳ Minimal | ~5% | 1 auth API test file (14 test cases). No unit/integration/component/e2e tests |
+| 26 | Performance | ❌ Not Started | 0% | No lazy loading, code splitting, virtualization, bundle optimization |
+| 27 | Documentation | ⏳ Partial | ~40% | Comprehensive README, API docs for auth/health. Missing developer guide, ADRs, deployment guide |
+| 28 | Deployment | ❌ Not Started | 0% | No Docker, nginx, or production configuration |
+| 29 | CI/CD | ❌ Not Started | 0% | No GitHub Actions or deployment pipeline |
+| 30 | Production Readiness | ❌ Not Started | 0% | No final review, security verification, or deployment checklist |
 
 ### Metrics to Track
 
