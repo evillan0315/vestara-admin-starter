@@ -1,4 +1,4 @@
-import type {  UserRole } from '@vestara/types';
+import { AuditAction } from '@vestara/types';
 import { settingsRepository, auditLogRepository } from '../repositories/index.js';
 
 export class SettingsService {
@@ -23,7 +23,7 @@ export class SettingsService {
     key: string,
     value: Record<string, unknown>,
     updatedBy?: string,
-    action: AuditAction = 'settings_update',
+    action: AuditAction = AuditAction.SETTINGS_UPDATE,
   ) {
     const setting = await settingsRepository.upsert(key, value, updatedBy);
 
@@ -43,7 +43,7 @@ export class SettingsService {
 
     await settingsRepository.delete(key);
 
-    await this.logAudit('settings_delete', 'setting', key, {
+    await this.logAudit(AuditAction.SETTINGS_DELETE, 'setting', key, {
       previousValue: setting.value,
       updatedBy,
     });
@@ -55,7 +55,7 @@ export class SettingsService {
    * Log settings-related audit entries.
    */
   private async logAudit(action: AuditAction, entity: string, entityId: string, metadata?: Record<string, unknown>) {
-    const userId = metadata?.updatedBy || 'system';
+    const userId: string = typeof metadata?.updatedBy === 'string' ? metadata.updatedBy : 'system';
 
     await auditLogRepository.create({
       action,

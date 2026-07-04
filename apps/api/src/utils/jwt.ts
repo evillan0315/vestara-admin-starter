@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { type SignOptions, type JwtPayload } from 'jsonwebtoken';
 import { config } from '../config/index.js';
 
 export class JwtService {
@@ -6,10 +6,14 @@ export class JwtService {
    * Generate JWT access token.
    */
   static generateAccessToken(userId: string): string {
+    const options: SignOptions = {
+      expiresIn: config.jwt.expiresIn as SignOptions['expiresIn'],
+      algorithm: 'HS256',
+    };
     return jwt.sign(
       { id: userId, type: 'access' },
-      config.jwt.secret as string,
-      { expiresIn: config.jwt.expiresIn, algorithm: 'HS256' },
+      config.jwt.secret,
+      options,
     );
   }
 
@@ -17,10 +21,14 @@ export class JwtService {
    * Generate JWT refresh token.
    */
   static generateRefreshToken(userId: string): string {
+    const options: SignOptions = {
+      expiresIn: config.jwt.refreshExpiresIn as SignOptions['expiresIn'],
+      algorithm: 'HS256',
+    };
     return jwt.sign(
       { id: userId, type: 'refresh' },
-      config.jwt.refreshSecret as string,
-      { expiresIn: config.jwt.refreshExpiresIn, algorithm: 'HS256' },
+      config.jwt.refreshSecret,
+      options,
     );
   }
 
@@ -31,7 +39,7 @@ export class JwtService {
     try {
       const decoded = jwt.verify(token, config.jwt.secret as string) as JwtPayload;
       return { id: decoded.id };
-    } catch (_error) {
+    } catch {
       return null;
     }
   }
@@ -43,7 +51,7 @@ export class JwtService {
     try {
       const decoded = jwt.verify(token, config.jwt.refreshSecret as string) as JwtPayload;
       return { id: decoded.id };
-    } catch (_error) {
+    } catch {
       return null;
     }
   }

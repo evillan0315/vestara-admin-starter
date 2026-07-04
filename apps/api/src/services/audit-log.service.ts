@@ -20,58 +20,19 @@ export class AuditLogService {
   } = {}) {
     const { page = 1, perPage = 20 } = params;
 
-    const where: {
-      userId?: string;
-      action?: string;
-      entity?: string;
-      entityId?: string;
-      ipAddress?: string;
-      createdAt?: { gte?: Date; lte?: Date };
-    } = {};
+    const result = await auditLogRepository.findAll({
+      page,
+      perPage,
+      userId: params.userId,
+      action: params.action,
+      entity: params.entity,
+      startDate: params.startDate?.toISOString(),
+      endDate: params.endDate?.toISOString(),
+      sort: params.sort,
+      order: params.order,
+    });
 
-    if (params.userId) where.userId = params.userId;
-    if (params.action) where.action = params.action;
-    if (params.entity) where.entity = params.entity;
-    if (params.entityId) where.entityId = params.entityId;
-    if (params.ipAddress) where.ipAddress = params.ipAddress;
-    if (params.startDate || params.endDate) {
-      where.createdAt = {};
-      if (params.startDate) where.createdAt.gte = params.startDate;
-      if (params.endDate) where.createdAt.lte = params.endDate;
-    }
-
-    const orderBy: Record<string, 'asc' | 'desc'> = {};
-    if (params.sort) {
-      orderBy[params.sort] = params.order ?? 'desc';
-    } else {
-      orderBy.createdAt = 'desc';
-    }
-
-    const skip = (page - 1) * perPage;
-
-    const [logs, total] = await Promise.all([
-      auditLogRepository.findAll({
-        where,
-        orderBy,
-        skip,
-        take: perPage,
-        select: {
-          id: true,
-          action: true,
-          entity: true,
-          entityId: true,
-          userId: true,
-          metadata: true,
-          ipAddress: true,
-          userAgent: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
-      auditLogRepository.count({ where }),
-    ]);
-
-    return { data: logs, page, perPage, total };
+    return { data: result.logs, page, perPage, total: result.total };
   }
 
   /**

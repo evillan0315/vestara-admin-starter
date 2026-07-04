@@ -154,6 +154,7 @@ export const AUDIT_ACTIONS = {
   ACTIVATE: 'activate',
   PASSWORD_CHANGE: 'password_change',
   SETTINGS_UPDATE: 'settings_update',
+  SETTINGS_DELETE: 'settings_delete',
 } as const;
 
 export const ENTITY_TYPES = {

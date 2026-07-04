@@ -42,6 +42,7 @@ export enum AuditAction {
   ACTIVATE = 'activate',
   PASSWORD_CHANGE = 'password_change',
   SETTINGS_UPDATE = 'settings_update',
+  SETTINGS_DELETE = 'settings_delete',
 }
 
 export enum EntityType {

@@ -21,7 +21,7 @@ export class AppError extends Error {
  * 400 Bad Request
  */
 export class BadRequestError extends AppError {
-  constructor(message = 'Bad request', code = ERROR_CODES.INVALID_INPUT, details?: unknown) {
+  constructor(message = 'Bad request', code: string = ERROR_CODES.INVALID_INPUT, details?: unknown) {
     super(message, HTTP_STATUS.BAD_REQUEST, code, details);
     this.name = 'BadRequestError';
   }
@@ -33,7 +33,7 @@ export class BadRequestError extends AppError {
 export class UnauthorizedError extends AppError {
   constructor(
     message = 'Authentication required',
-    code = ERROR_CODES.TOKEN_INVALID,
+    code: string = ERROR_CODES.TOKEN_INVALID,
     details?: unknown,
   ) {
     super(message, HTTP_STATUS.UNAUTHORIZED, code, details);
@@ -47,7 +47,7 @@ export class UnauthorizedError extends AppError {
 export class ForbiddenError extends AppError {
   constructor(
     message = 'Insufficient permissions',
-    code = ERROR_CODES.FORBIDDEN,
+    code: string = ERROR_CODES.FORBIDDEN,
     details?: unknown,
   ) {
     super(message, HTTP_STATUS.FORBIDDEN, code, details);
@@ -61,7 +61,7 @@ export class ForbiddenError extends AppError {
 export class NotFoundError extends AppError {
   constructor(
     message = 'Resource not found',
-    code = ERROR_CODES.NOT_FOUND,
+    code: string = ERROR_CODES.NOT_FOUND,
     details?: unknown,
   ) {
     super(message, HTTP_STATUS.NOT_FOUND, code, details);
@@ -75,7 +75,7 @@ export class NotFoundError extends AppError {
 export class ConflictError extends AppError {
   constructor(
     message = 'Resource already exists',
-    code = ERROR_CODES.CONFLICT,
+    code: string = ERROR_CODES.CONFLICT,
     details?: unknown,
   ) {
     super(message, HTTP_STATUS.CONFLICT, code, details);
@@ -99,7 +99,7 @@ export class ValidationError extends AppError {
 export class RateLimitError extends AppError {
   constructor(
     message = 'Too many requests, please try again later',
-    code = ERROR_CODES.RATE_LIMITED,
+    code: string = ERROR_CODES.RATE_LIMITED,
   ) {
     super(message, HTTP_STATUS.TOO_MANY_REQUESTS, code);
     this.name = 'RateLimitError';
@@ -112,7 +112,7 @@ export class RateLimitError extends AppError {
 export class InternalError extends AppError {
   constructor(
     message = 'Internal server error',
-    code = ERROR_CODES.INTERNAL_ERROR,
+    code: string = ERROR_CODES.INTERNAL_ERROR,
     details?: unknown,
   ) {
     super(message, HTTP_STATUS.INTERNAL_SERVER_ERROR, code, details);

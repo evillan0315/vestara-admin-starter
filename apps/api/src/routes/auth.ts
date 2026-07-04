@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import {  AuthResponseDTO } from '@vestara/types';
+import { AuthResponseDTO, UserRole } from '@vestara/types';
 import { createUserSchema, loginSchema } from '@vestara/validation';
 import { authService } from '../services/index.js';
 import { JwtService } from '../utils/jwt.js';
@@ -16,11 +16,21 @@ router.post('/register', validate(createUserSchema), async (req, res, next) => {
     const authResult = await authService.register(req.body);
     // Create AuthResponseDTO from auth result
     const response: AuthResponseDTO = {
-      user: authResult.user,
+      user: {
+        id: authResult.user.id,
+        email: authResult.user.email,
+        firstName: authResult.user.firstName,
+        lastName: authResult.user.lastName,
+        role: authResult.user.role as unknown as UserRole,
+        isActive: authResult.user.isActive,
+        avatarUrl: authResult.user.avatarUrl ?? undefined,
+        createdAt: authResult.user.createdAt.toISOString(),
+        updatedAt: authResult.user.updatedAt.toISOString(),
+      },
       tokens: {
         accessToken: authResult.accessToken,
         refreshToken: authResult.refreshToken,
-        expiresIn: 3600, // or calculate based on token expiration
+        expiresIn: 3600,
       },
     };
     res.status(201).json({
@@ -46,11 +56,22 @@ router.post('/login', validate(loginSchema), async (req, res, next) => {
 
     // Create AuthResponseDTO from auth result
     const response: AuthResponseDTO = {
-      user: authResult.user,
+      user: {
+        id: authResult.user.id,
+        email: authResult.user.email,
+        firstName: authResult.user.firstName,
+        lastName: authResult.user.lastName,
+        role: authResult.user.role as unknown as UserRole,
+        isActive: authResult.user.isActive,
+        avatarUrl: authResult.user.avatarUrl ?? undefined,
+        lastLoginAt: authResult.user.lastLoginAt?.toISOString(),
+        createdAt: authResult.user.createdAt.toISOString(),
+        updatedAt: authResult.user.updatedAt.toISOString(),
+      },
       tokens: {
         accessToken: authResult.accessToken,
         refreshToken: authResult.refreshToken,
-        expiresIn: 3600, // or calculate based on token expiration
+        expiresIn: 3600,
       },
     };
     res.json({

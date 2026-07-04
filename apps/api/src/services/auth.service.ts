@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import type { UserRole } from '@vestara/types';
+import { ERROR_CODES } from '@vestara/constants';
 import { JwtService } from '../utils/jwt.js';
 import { ConflictError, UnauthorizedError } from '../utils/errors.js';
 import { userRepository, sessionRepository, refreshTokenRepository, auditLogRepository } from '../repositories/index.js';
@@ -19,7 +20,7 @@ export class AuthService {
 
     const existingUser = await userRepository.findByEmail(email);
     if (existingUser) {
-      throw new ConflictError('Email already registered', 'AUTH_EMAIL_EXISTS');
+      throw new ConflictError('Email already registered', ERROR_CODES.USER_ALREADY_EXISTS);
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -50,12 +51,12 @@ export class AuthService {
 
     const user = await userRepository.findByEmail(email);
     if (!user || !user.isActive) {
-      throw new UnauthorizedError('Invalid credentials', 'AUTH_INVALID_CREDENTIALS');
+      throw new UnauthorizedError('Invalid credentials', ERROR_CODES.INVALID_CREDENTIALS);
     }
 
     const isValidPassword = await bcrypt.compare(password, user.passwordHash);
     if (!isValidPassword) {
-      throw new UnauthorizedError('Invalid credentials', 'AUTH_INVALID_CREDENTIALS');
+      throw new UnauthorizedError('Invalid credentials', ERROR_CODES.INVALID_CREDENTIALS);
     }
 
     await userRepository.updateLastLogin(user.id);
@@ -84,17 +85,17 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     const refreshTokenRecord = await refreshTokenRepository.findByToken(refreshToken);
     if (!refreshTokenRecord || refreshTokenRecord.revokedAt) {
-      throw new UnauthorizedError('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
+      throw new UnauthorizedError('Invalid refresh token', ERROR_CODES.REFRESH_TOKEN_INVALID);
     }
 
     const tokenUser = JwtService.validateRefreshToken(refreshToken);
     if (!tokenUser) {
-      throw new UnauthorizedError('Invalid refresh token', 'AUTH_INVALID_REFRESH_TOKEN');
+      throw new UnauthorizedError('Invalid refresh token', ERROR_CODES.REFRESH_TOKEN_INVALID);
     }
 
     const user = await userRepository.findByIdOrThrow(tokenUser.id);
     if (!user.isActive) {
-      throw new UnauthorizedError('User account is inactive', 'AUTH_USER_INACTIVE');
+      throw new UnauthorizedError('User account is inactive', ERROR_CODES.ACCOUNT_DISABLED);
     }
 
     const tokens = await this.generateTokens(user.id);
