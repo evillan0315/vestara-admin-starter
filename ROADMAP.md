@@ -18,8 +18,8 @@ This roadmap defines the GitHub-based project structure, milestone organization,
 | Phase | Focus | Items | Status |
 |-------|-------|-------|--------|
 | **1–5** | Foundation & Backend | Project Init, Shared Architecture, Database, Express Server, Auth API | ✅ Complete |
-| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial (~70%) |
-| **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ⏳ Partial (~40%) |
+| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial (~85%) |
+| **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ⏳ Partial (~50%) |
 | **11** | Authentication UI | Login, Register, Forgot/Reset Password, Protected Routes | ❌ Not Started |
 | **12–14** | User Management | User CRUD, Roles & Permissions, User Profile | ❌ Not Started |
 | **15–17** | Reusable UI | Forms, Data Table, Feedback Components | ⏳ Partial (~60%) |
@@ -317,9 +317,9 @@ Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `doc
 | 4 | Express Server | ✅ Complete | 100% | Full middleware stack (CORS, security headers, body parser, request logger, validation, error handler, 404) |
 | 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging |
 | 6 | React Foundation | ✅ Complete | 100% | Vite + MUI + TanStack Query + routing + API client + auth context + route guards + feature-based module structure |
-| 7 | Design System | ⏳ Partial | ~70% | MUI light/dark themes + Tailwind integrated. **Built:** Button, Input, Card, Modal, Drawer, Sidebar, Header, Footer, Toast, Loading, EmptyState. **Missing:** typography system, remaining data components |
-| 8 | Dashboard Layout | ⏳ Partial | ~40% | Sidebar (collapsible), Header (search, notifications, theme toggle, user menu), Footer, RootLayout integrated. **Missing:** data table, widgets, charts, activity feed |
-| 9 | Dashboard Widgets | ❌ Not Started | 0% | No statistics, KPI cards, charts, activity feed |
+| 7 | Design System | ⏳ Partial | ~85% | MUI light/dark themes + Tailwind integrated. **Built:** Button, Input, Card, Modal, Drawer, Typography (Heading, Subheading, Paragraph, Caption, Label), Sidebar, Header, Footer, Toast, Loading, EmptyState. **Missing:** remaining data components, advanced form elements |
+| 8 | Dashboard Layout | ⏳ Partial | ~40% | Sidebar (collapsible), Header (search, notifications, theme toggle, user menu), Footer, RootLayout integrated. **Missing:** data table, charts integration, activity feed integration |
+| 9 | Dashboard Widgets | ⏳ Partial | ~30% | **Built:** StatCard (with trend indicators, icons, change percentages), ActivityFeed (with user avatars, timestamps, action types). **Missing:** KPI cards, charts integration, real data wiring |
 | 10 | Dashboard Features | ❌ Not Started | 0% | No global search, notifications, preferences, audit logs UI, analytics |
 | 11 | Authentication Pages | ❌ Not Started | 0% | No login, register, forgot/reset password pages, no protected routes |
 | 12 | User CRUD | ❌ Not Started | 0% | Backend repository exists but routes are not wired. No frontend. |

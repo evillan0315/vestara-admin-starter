@@ -13,3 +13,6 @@ export type { ModalProps, ConfirmDialogProps } from './Modal';
 export { Drawer, default as DrawerComponent } from './Drawer';
 export { Sidebar as DrawerSidebar, default as DrawerSidebarComponent } from './Drawer';
 export type { CustomDrawerProps, SidebarDrawerProps } from './Drawer';
+
+export { Typography, Heading, Subheading, Paragraph, Caption, Label, default as TypographyComponent } from './Typography';
+export type { TypographyProps } from './Typography';
