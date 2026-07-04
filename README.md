@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./assets/logo.png" alt="Vestara Logo" width="120" /><br />
+  <img src="./assets/logo.svg" alt="Vestara Logo" width="120" /><br />
   VESTARA
 </h1>
 
@@ -50,71 +50,87 @@ Whether users are purchasing products, transferring funds, earning rewards, book
 
 # 📸 Application Screenshots
 
-## User Dashboard
+## Admin Dashboard
 
-| Dark Dashboard | Light Dashboard |
-|----------------|-----------------|
-| <img src="./screens/vestara-dashboard.png" width="100%" alt="Vestara User Dashboard (Dark)"> | <img src="./screens/vestara-dashboard-light.png" width="100%" alt="Vestara User Dashboard (Light)"> |
-
----
-
-## Marketplace Dashboard
-
-<img src="./screens/vestara-admin-marketplace-dashboard-overview.png" width="100%" alt="Vestara Marketplace Dashboard">
-
-The Marketplace Dashboard provides a comprehensive command center for merchants, administrators, and marketplace operators. It offers real-time visibility into marketplace performance, orders, escrow transactions, buyer requests, funding campaigns, member activity, fraud monitoring, and ecosystem growth through an intuitive analytics-driven interface.
+| Dashboard Overview | Full HD Dashboard |
+|--------------------|-------------------|
+| <img src="./assets/Vestara  Dashboard Elite.png" width="100%" alt="Vestara Admin Dashboard"> | <img src="./assets/Vestara Full HD Dashboard Elite.png" width="100%" alt="Vestara Full HD Dashboard"> |
 
 ---
 
-## Administration Platform
+## Elite Companion Dashboard
 
-| Main Dashboard | Analytics Dashboard |
-|----------------|---------------------|
-| <img src="./screens/vestara-admin-dashboard-main.png" width="100%" alt="Vestara Admin Dashboard"> | <img src="./screens/vestara-admin-dashboard-cyan-green.png" width="100%" alt="Vestara Analytics Dashboard"> |
-
----
-
-## Digital Wallet
-
-<img src="./screens/vestara-admin-digital-wallet.png" width="100%" alt="Vestara Digital Wallet">
-
-The Digital Wallet enables users to securely manage balances, transfers, deposits, withdrawals, reward points, and future investment assets from a unified financial account.
+| Dashboard Overview | Elite Companion |
+|--------------------|-----------------|
+| <img src="./assets/vestara-elite-dashboard.png" width="100%" alt="Vestara Elite Dashboard"> | <img src="./assets/Vestara Elite Companion Dsahboard 01.png" width="100%" alt="Vestara Elite Companion Dashboard"> |
 
 ---
 
-## Marketplace Management
+## Landing Pages
 
-<img src="./screens/vestara-admin-marketplace-products.png" width="100%" alt="Vestara Marketplace Management">
+| Main Landing | Companion Page |
+|--------------|----------------|
+| <img src="./assets/Landing Page 01.png" width="100%" alt="Vestara Landing Page"> | <img src="./assets/Landing Page Companion Page.png" width="100%" alt="Vestara Companion Page"> |
 
-Marketplace administrators can manage products, merchants, inventory, disputes, moderation, categories, and marketplace operations from a centralized console.
-
----
-
-## Travel & Booking Platform
-
-| Flight & Hotel | Elite Companion |
-|----------------|-----------------|
-| <img src="./screens/vestara-admin-booking-flight-hotel.png" width="100%" alt="Flight & Hotel Booking"> | <img src="./screens/vestara-admin-booking-elite-companion.png" width="100%" alt="Elite Companion Services"> |
-
-The Booking Platform extends Vestara beyond commerce by integrating premium travel services, accommodations, transportation, and concierge experiences into the broader financial ecosystem.
+| Individual Companion | Elite Companions |
+|----------------------|------------------|
+| <img src="./assets/Landing Page Companion Page Individual.png" width="100%" alt="Vestara Individual Companion"> | <img src="./assets/Full Elite Companions Hero.png" width="100%" alt="Full Elite Companions"> |
 
 ---
 
 ## Elite Companions Platform
 
-| Dashboard | Booking |
-|-----------|---------|
-| <img src="./screens/vestara-admin-elite-dashboard-overview.png" width="100%" alt="Elite Companion Dashboard"> | <img src="./screens/vestara-admin-elite-dashboard-booking.png" width="100%" alt="Elite Companion Bookings"> |
+| Elite Companion | Premium Companion |
+|-----------------|-------------------|
+| <img src="./assets/Vestara Elite Companion Marionette.png" width="100%" alt="Elite Companion"> | <img src="./assets/Vestara Elite Companion Solo marionette.png" width="100%" alt="Solo Companion"> |
 
-| Companions | Memberships |
-|------------|-------------|
-| <img src="./screens/vestara-admin-elite-dashboard-companion.png" width="100%" alt="Elite Companion Management"> | <img src="./screens/vestara-admin-elite-dashboard-membership.png" width="100%" alt="Elite Companion Memberships"> |
+| Companion Services | Luxury Companion |
+|--------------------|------------------|
+| <img src="./assets/vestara-companion-02.png" width="100%" alt="Companion Services"> | <img src="./assets/Luxury Cocktail Companion Female 01.png" width="100%" alt="Luxury Companion"> |
 
-| Payments & Payouts |
-|--------------------|
-| <img src="./screens/vestara-admin-elite-dashboard-payments-payout.png" width="100%" alt="Elite Companion Payments and Payouts"> |
+---
 
-Vestara Elite Companions extends the Vestara ecosystem with a premium lifestyle concierge platform that connects clients with highly vetted professional companions, executive protection specialists, and luxury concierge services. The platform provides comprehensive operational management through dedicated dashboards for bookings, companion management, memberships, payments, payouts, security operations, virtual consultations, and financial reporting. Designed for enterprise-scale operations, it delivers real-time visibility into service performance, companion availability, revenue, client engagement, memberships, and payout distribution while maintaining the highest standards of safety, discretion, compliance, and luxury service excellence.
+## Elite Screenshots (Detailed)
+
+| Dashboard Overview | Client Management |
+|--------------------|-------------------|
+| <img src="./screens/vestara-admin-elite-dashboard-overview.png" width="100%" alt="Elite Dashboard Overview"> | <img src="./screens/vestara-admin-elite-dashboard-client.png" width="100%" alt="Client Management"> |
+
+| Companion Management | Membership |
+|----------------------|------------|
+| <img src="./screens/vestara-admin-elite-dashboard-companion.png" width="100%" alt="Companion Management"> | <img src="./screens/vestara-admin-elite-dashboard-membership.png" width="100%" alt="Membership Management"> |
+
+| Bookings | Payments & Payouts |
+|----------|--------------------|
+| <img src="./screens/vestara-admin-elite-dashboard-booking.png" width="100%" alt="Booking Management"> | <img src="./screens/vestara-admin-elite-dashboard-payments-payout.png" width="100%" alt="Payments and Payouts"> |
+
+| User Profile | User Settings |
+|--------------|---------------|
+| <img src="./screens/vestara-admin-elite-dashboard-user-profile.png" width="100%" alt="User Profile"> | <img src="./screens/vestara-admin-elite-dashboard-user-settings.png" width="100%" alt="User Settings"> |
+
+---
+
+## Marketing & Promotional
+
+| FB Post | Promotional Content |
+|---------|---------------------|
+| <img src="./assets/Vestara Companion Elite FB post.png" width="100%" alt="Vestara FB Post"> | <img src="./assets/Vestara Promotional Content 03.png" width="100%" alt="Vestara Promotional Content"> |
+
+| Marketing | Investor Marketing |
+|-----------|-------------------|
+| <img src="./assets/vestara-elite-marketing-recruitment.png" width="100%" alt="Marketing Recruitment"> | <img src="./assets/vestara-elite-investor-marketing-ads.png" width="100%" alt="Investor Marketing"> |
+
+---
+
+## Elite Companion Profiles
+
+| Luxury Evening Gown | Executive Business |
+|---------------------|-------------------|
+| <img src="./assets/Luxury Evening Gown Female.png" width="100%" alt="Luxury Evening Gown Female"> | <img src="./assets/Executive Business Companion.png" width="100%" alt="Executive Business Companion"> |
+
+| Filipino Elite | Resort Companion |
+|----------------|------------------|
+| <img src="./assets/Filipino Elite Evening Companion Female.png" width="100%" alt="Filipino Elite Companion"> | <img src="./assets/Resort Companion.png" width="100%" alt="Resort Companion"> |
 
 ---
 
