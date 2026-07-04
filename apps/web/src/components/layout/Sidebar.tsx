@@ -370,9 +370,18 @@ export const Sidebar = ({
     <StyledSidebar collapsed={collapsed} sidebarWidth={width} sidebarCollapsedWidth={collapsedWidth}>
       <LogoContainer collapsed={collapsed}>
         {logo || (
-          <Typography component="span" variant="h6" color="primary" sx={{ whiteSpace: 'nowrap' }}>
-            {collapsed ? 'V' : 'Vestara'}
-          </Typography>
+          <Box
+            component="img"
+            src="/logo.svg"
+            alt="Vestara"
+            sx={{
+              height: 32,
+              width: collapsed ? 0 : 'auto',
+              objectFit: 'contain',
+              transition: 'opacity 0.2s ease, width 0.2s ease',
+              opacity: collapsed ? 0 : 1,
+            }}
+          />
         )}
         {showToggle && (
           <ToggleButton onClick={handleToggle} collapsed={collapsed}>

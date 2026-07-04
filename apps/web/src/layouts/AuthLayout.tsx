@@ -22,13 +22,13 @@ const LogoSection = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '8px',
+  gap: '12px',
 }));
 
-const LogoText = styled(Typography)(() => ({
-  fontSize: '1.75rem',
-  fontWeight: 700,
-  letterSpacing: '-0.02em',
+const LogoImage = styled('img')(() => ({
+  height: 48,
+  width: 'auto',
+  objectFit: 'contain',
 }));
 
 export function AuthLayout() {
@@ -36,7 +36,7 @@ export function AuthLayout() {
     <AuthContainer>
       <AuthCard>
         <LogoSection>
-          <LogoText>Vestara</LogoText>
+          <LogoImage src="/logo.svg" alt="Vestara" />
           <Typography variant="body2" color="text.secondary" textAlign="center">
             Admin Dashboard
           </Typography>
