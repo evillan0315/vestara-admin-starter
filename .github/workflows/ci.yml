@@ -35,6 +35,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
+        env:
+          DATABASE_URL: "postgresql://localhost:5432/vestara"
 
       - name: Typecheck
         run: pnpm turbo typecheck --filter=@vestara/${{ matrix.app }}
@@ -98,6 +100,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
+        env:
+          DATABASE_URL: "postgresql://localhost:5432/vestara"
 
       - name: Run tests
         run: pnpm turbo test --filter=@vestara/${{ matrix.app }}
@@ -130,6 +134,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
+        env:
+          DATABASE_URL: "postgresql://localhost:5432/vestara"
 
       - name: Build
         run: pnpm turbo build --filter=@vestara/${{ matrix.app }}
