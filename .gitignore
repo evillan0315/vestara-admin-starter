@@ -47,3 +47,7 @@ temp/
 
 # TypeScript
 *.tsbuildinfo
+
+# Vercel
+.vercel/
+.vercel/project.json
