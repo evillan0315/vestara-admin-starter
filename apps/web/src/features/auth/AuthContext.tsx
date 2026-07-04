@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import type { UserDTO, AuthResponseDTO } from '@vestara/types';
 import { apiClient } from '../../api/client';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 interface AuthState {
   user: UserDTO | null;
   isAuthenticated: boolean;
@@ -12,6 +14,8 @@ interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (data: { email: string; password: string; firstName: string; lastName: string }) => Promise<void>;
   logout: () => Promise<void>;
+  oauthRedirect: (provider: 'google' | 'github') => void;
+  handleOAuthCallback: (accessToken: string, refreshToken: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -98,8 +102,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, [state.user?.id, setUser]);
 
+  /**
+   * Redirect the browser to the backend OAuth authorization endpoint.
+   * The backend will redirect to the provider's consent screen.
+   */
+  const oauthRedirect = useCallback((provider: 'google' | 'github') => {
+    const baseUrl = API_BASE_URL.replace(/\/$/, '');
+    window.location.href = `${baseUrl}/api/v1/auth/oauth/${provider}`;
+  }, []);
+
+  /**
+   * Handle the OAuth callback by storing tokens and fetching the current user.
+   * Called from the /auth/callback page after the backend redirects back.
+   */
+  const handleOAuthCallback = useCallback(async (accessToken: string, refreshToken: string) => {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+
+    // Fetch the current user with the new token
+    const res = await apiClient.get<{ user: UserDTO }>('/auth/me');
+    if (res.data?.user) {
+      setUser(res.data.user);
+    } else {
+      // Token was invalid — clean up
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setUser(null);
+      throw new Error('Failed to authenticate with OAuth provider');
+    }
+  }, [setUser]);
+
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout, oauthRedirect, handleOAuthCallback }}>
       {children}
     </AuthContext.Provider>
   );

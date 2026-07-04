@@ -58,6 +58,7 @@ export class UserRepository extends BaseRepository {
           role: true,
           isActive: true,
           avatarUrl: true,
+          provider: true,
           lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
@@ -97,6 +98,8 @@ export class UserRepository extends BaseRepository {
         role: true,
         isActive: true,
         avatarUrl: true,
+        provider: true,
+        providerId: true,
         lastLoginAt: true,
         createdAt: true,
         updatedAt: true,
@@ -115,22 +118,37 @@ export class UserRepository extends BaseRepository {
   }
 
   /**
+   * Find user by provider and provider ID (OAuth).
+   */
+  async findByProvider(provider: string, providerId: string) {
+    return this.prisma.user.findUnique({
+      where: { provider_providerId: { provider, providerId } },
+    });
+  }
+
+  /**
    * Create a new user.
    */
   async create(data: {
     email: string;
-    passwordHash: string;
+    passwordHash?: string;
     firstName: string;
     lastName: string;
     role: UserRole;
+    provider?: string;
+    providerId?: string;
+    avatarUrl?: string;
   }) {
     return this.prisma.user.create({
       data: {
         email: data.email,
-        passwordHash: data.passwordHash,
+        ...(data.passwordHash && { passwordHash: data.passwordHash }),
         firstName: data.firstName,
         lastName: data.lastName,
         role: data.role,
+        ...(data.provider && { provider: data.provider }),
+        ...(data.providerId && { providerId: data.providerId }),
+        ...(data.avatarUrl && { avatarUrl: data.avatarUrl }),
       },
       select: {
         id: true,
@@ -140,6 +158,8 @@ export class UserRepository extends BaseRepository {
         role: true,
         isActive: true,
         avatarUrl: true,
+        provider: true,
+        providerId: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -176,6 +196,8 @@ export class UserRepository extends BaseRepository {
         role: true,
         isActive: true,
         avatarUrl: true,
+        provider: true,
+        providerId: true,
         lastLoginAt: true,
         createdAt: true,
         updatedAt: true,

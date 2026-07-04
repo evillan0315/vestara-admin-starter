@@ -12,18 +12,48 @@ import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '../pages/ResetPasswordPage';
+import { OAuthCallbackPage } from '../pages/OAuthCallbackPage';
 
 export function AppRoutes() {
   return (
     <Routes>
+      {/* OAuth callback — no layout, standalone page */}
+      <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+
       {/* Public routes — redirect to dashboard if already authenticated */}
       <Route element={<PublicRoute />}>
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-        </Route>
+        <Route
+          path="/login"
+          element={
+            <AuthLayout>
+              <LoginPage />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <AuthLayout>
+              <RegisterPage />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <AuthLayout>
+              <ForgotPasswordPage />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <AuthLayout>
+              <ResetPasswordPage />
+            </AuthLayout>
+          }
+        />
       </Route>
 
       {/* Protected routes — require authentication */}

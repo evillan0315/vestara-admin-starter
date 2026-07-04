@@ -1,79 +1,52 @@
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Box,
   Typography,
-  TextField,
   Button,
+  Checkbox,
+  FormControlLabel,
   Alert,
   CircularProgress,
-  styled,
 } from '@mui/material';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { loginSchema, type LoginInput } from '@vestara/validation';
 import { useAuth } from '../features/auth/AuthContext';
-
-const Form = styled('form')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3),
-}));
-
-const FormTextField = styled(TextField)(() => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 8,
-  },
-}));
-
-const SubmitButton = styled(Button)(() => ({
-  borderRadius: 8,
-  padding: '10px 24px',
-  textTransform: 'none',
-  fontSize: '0.95rem',
-  fontWeight: 600,
-}));
-
-const LinksRow = styled(Box)(() => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-}));
-
-const StyledRouterLink = styled(RouterLink)(() => ({
-  textDecoration: 'none',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  color: 'inherit',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
+import AuthField from '../components/auth/AuthField';
+import OAuthButtons from '../components/auth/OAuthButtons';
+import { colors } from '../theme/tokens';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, oauthRedirect } = useAuth();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/';
+
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [remember, setRemember] = useState(false);
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
+
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
 
   const onSubmit = async (data: LoginInput) => {
     setError(null);
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      navigate('/', { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Login failed. Please try again.';
@@ -83,77 +56,201 @@ export function LoginPage() {
     }
   };
 
+  const handleOAuth = (provider: 'google' | 'github') => {
+    oauthRedirect(provider);
+  };
+
+  const isLoading = isSubmitting;
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3,
-      }}
-    >
-      <Box>
-        <Typography variant="h5" fontWeight={700} gutterBottom>
-          Sign in
+    <Box>
+      <Typography
+        sx={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: 28,
+          color: colors.text,
+          mb: 0.75,
+        }}
+      >
+        Welcome back
+      </Typography>
+      <Typography sx={{ fontSize: 14, color: colors.secondary, mb: 4 }}>
+        Sign in to your Vestara admin account.{' '}
+        <Typography
+          component={RouterLink}
+          to="/register"
+          sx={{
+            color: colors.gold,
+            fontWeight: 600,
+            textDecoration: 'none',
+            display: 'inline',
+            '&:hover': { color: colors.goldHover },
+          }}
+        >
+          Create an account
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Enter your credentials to access the dashboard
-        </Typography>
-      </Box>
+      </Typography>
 
       {error && (
-        <Alert severity="error" onClose={() => setError(null)}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2.5,
+            bgcolor: 'rgba(239,68,68,0.1)',
+            color: colors.error,
+            border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: '10px',
+            '& .MuiAlert-icon': { color: colors.error },
+          }}
+        >
           {error}
         </Alert>
       )}
 
-      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <FormTextField
-          label="Email"
+      <OAuthButtons
+        onGoogle={() => handleOAuth('google')}
+        onGitHub={() => handleOAuth('github')}
+        loading={isLoading}
+        label="sign in"
+      />
+
+      <Box sx={{ my: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ flex: 1, height: 1, bgcolor: colors.border }} />
+        <Typography sx={{ fontSize: 12, color: colors.muted }}>
+          or sign in with email
+        </Typography>
+        <Box sx={{ flex: 1, height: 1, bgcolor: colors.border }} />
+      </Box>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <AuthField
+          label="Email address"
           type="email"
-          placeholder="you@example.com"
-          fullWidth
+          value={emailValue}
+          onChange={(v) => setValue('email', v, { shouldValidate: true })}
+          placeholder="admin@vestara.com"
+          error={errors.email?.message}
           autoComplete="email"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email')}
+          icon={<Mail size={16} />}
+          disabled={isLoading}
         />
 
-        <FormTextField
+        <AuthField
           label="Password"
           type="password"
+          value={passwordValue}
+          onChange={(v) => setValue('password', v, { shouldValidate: true })}
           placeholder="Enter your password"
-          fullWidth
+          error={errors.password?.message}
           autoComplete="current-password"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register('password')}
+          icon={<Lock size={16} />}
+          disabled={isLoading}
         />
 
-        <LinksRow>
-          <StyledRouterLink to="/forgot-password">
-            Forgot password?
-          </StyledRouterLink>
-        </LinksRow>
-
-        <SubmitButton
-          type="submit"
-          variant="contained"
-          fullWidth
-          disabled={isSubmitting}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 3,
+            mt: -0.5,
+          }}
         >
-          {isSubmitting ? (
-            <CircularProgress size={20} color="inherit" />
-          ) : (
-            'Sign in'
-          )}
-        </SubmitButton>
-      </Form>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                disabled={isLoading}
+                size="small"
+                sx={{
+                  color: colors.border,
+                  '&.Mui-checked': { color: colors.gold },
+                }}
+              />
+            }
+            label={
+              <Typography sx={{ fontSize: 13, color: colors.secondary }}>
+                Remember me
+              </Typography>
+            }
+          />
+          <Typography
+            component={RouterLink}
+            to="/forgot-password"
+            sx={{
+              fontSize: 13,
+              color: colors.gold,
+              fontWeight: 600,
+              textDecoration: 'none',
+              '&:hover': { color: colors.goldHover },
+            }}
+          >
+            Forgot password?
+          </Typography>
+        </Box>
 
-      <Typography variant="body2" color="text.secondary" textAlign="center">
-        Don't have an account?{' '}
-        <StyledRouterLink to="/register">
-          Create one
-        </StyledRouterLink>
+        <Button
+          type="submit"
+          fullWidth
+          disabled={isLoading}
+          endIcon={
+            isLoading ? (
+              <CircularProgress size={16} sx={{ color: '#0A0F18' }} />
+            ) : (
+              <ArrowRight size={18} />
+            )
+          }
+          sx={{
+            bgcolor: colors.gold,
+            color: '#0A0F18',
+            fontWeight: 800,
+            fontSize: 15,
+            py: 1.5,
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(216,164,65,0.3)',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: colors.goldHover,
+              boxShadow: '0 6px 24px rgba(216,164,65,0.4)',
+              transform: 'translateY(-1px)',
+            },
+            '&:active': { transform: 'translateY(0)' },
+            '&:disabled': { opacity: 0.6 },
+            transition: 'all .2s',
+          }}
+        >
+          {isLoading ? 'Signing in\u2026' : 'Sign in'}
+        </Button>
+      </Box>
+
+      <Typography
+        sx={{
+          fontSize: 12,
+          color: colors.muted,
+          textAlign: 'center',
+          mt: 3,
+          lineHeight: 1.7,
+        }}
+      >
+        By signing in, you agree to Vestara&apos;s{' '}
+        <Box
+          component="a"
+          href="#"
+          sx={{ color: colors.secondary, textDecoration: 'none' }}
+        >
+          Terms of Service
+        </Box>{' '}
+        and{' '}
+        <Box
+          component="a"
+          href="#"
+          sx={{ color: colors.secondary, textDecoration: 'none' }}
+        >
+          Privacy Policy
+        </Box>
+        .
       </Typography>
     </Box>
   );

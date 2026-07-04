@@ -50,7 +50,7 @@ export class AuthService {
     const { email, password, ipAddress, userAgent } = data;
 
     const user = await userRepository.findByEmail(email);
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || !user.passwordHash) {
       throw new UnauthorizedError('Invalid credentials', ERROR_CODES.INVALID_CREDENTIALS);
     }
 
@@ -147,6 +147,76 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  /**
+   * Find or create a user from an OAuth provider (Google, GitHub).
+   * Returns the existing user if already linked, or creates a new one.
+   */
+  async oauthLogin(data: {
+    provider: string;
+    providerId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl?: string;
+    ipAddress?: string;
+    userAgent?: string;
+  }) {
+    const { provider, providerId, email, firstName, lastName, avatarUrl, ipAddress, userAgent } = data;
+
+    // 1. Check if a user already exists for this provider+providerId
+    const user = await userRepository.findByProvider(provider, providerId);
+
+    if (user) {
+      // Existing OAuth user — update last login
+      await userRepository.updateLastLogin(user.id);
+      const tokens = await this.generateTokens(user.id);
+      await this.logAudit('OAUTH_LOGIN', 'user', user.id, { provider });
+      return { user, ...tokens };
+    }
+
+    // 2. Check if a user with the same email exists (email/password account)
+    const existingByEmail = await userRepository.findByEmail(email);
+    if (existingByEmail) {
+      // Log them in with their existing account
+      await userRepository.updateLastLogin(existingByEmail.id);
+      const tokens = await this.generateTokens(existingByEmail.id);
+      await sessionRepository.create({
+        userId: existingByEmail.id,
+        token: tokens.accessToken,
+        ipAddress,
+        userAgent,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      await this.logAudit('OAUTH_LOGIN', 'user', existingByEmail.id, { provider, linked: true });
+      return { user: existingByEmail, ...tokens };
+    }
+
+    // 3. Create a new user from OAuth data
+    const newUser = await userRepository.create({
+      email,
+      firstName,
+      lastName,
+      role: 'admin' as import('@vestara/types').UserRole,
+      provider,
+      providerId,
+      avatarUrl,
+    });
+
+    const tokens = await this.generateTokens(newUser.id);
+
+    await sessionRepository.create({
+      userId: newUser.id,
+      token: tokens.accessToken,
+      ipAddress,
+      userAgent,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    await this.logAudit('OAUTH_REGISTER', 'user', newUser.id, { provider });
+
+    return { user: newUser, ...tokens };
   }
 
   /**

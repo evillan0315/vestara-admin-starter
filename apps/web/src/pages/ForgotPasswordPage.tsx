@@ -5,58 +5,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Box,
   Typography,
-  TextField,
   Button,
   Alert,
   CircularProgress,
-  styled,
 } from '@mui/material';
-import { forgotPasswordSchema, type ForgotPasswordInput } from '@vestara/validation';
+import { Mail, ArrowRight, ArrowLeft } from 'lucide-react';
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordInput,
+} from '@vestara/validation';
 import { apiClient } from '../api/client';
-
-const Form = styled('form')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3),
-}));
-
-const FormTextField = styled(TextField)(() => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 8,
-  },
-}));
-
-const SubmitButton = styled(Button)(() => ({
-  borderRadius: 8,
-  padding: '10px 24px',
-  textTransform: 'none',
-  fontSize: '0.95rem',
-  fontWeight: 600,
-}));
-
-const StyledRouterLink = styled(RouterLink)(() => ({
-  textDecoration: 'none',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  color: 'inherit',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
-
-const StyledButton = styled('button')(({ theme }) => ({
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  cursor: 'pointer',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  color: theme.palette.primary.main,
-  textDecoration: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
+import AuthField from '../components/auth/AuthField';
+import { colors } from '../theme/tokens';
 
 export function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -65,15 +25,16 @@ export function ForgotPasswordPage() {
   const [submittedEmail, setSubmittedEmail] = useState('');
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: {
-      email: '',
-    },
+    defaultValues: { email: '' },
   });
+
+  const emailValue = watch('email');
 
   const onSubmit = async (data: ForgotPasswordInput) => {
     setError(null);
@@ -95,86 +56,192 @@ export function ForgotPasswordPage() {
 
   if (isSuccess) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <Alert severity="success">
-          <Typography variant="body2" fontWeight={600} gutterBottom>
-            Check your email
-          </Typography>
-          <Typography variant="body2">
-            We've sent a password reset link to <strong>{submittedEmail}</strong>.
-            Please check your inbox and follow the instructions.
-          </Typography>
-        </Alert>
+      <Box>
+        <Box
+          sx={{
+            width: 56,
+            height: 56,
+            borderRadius: '16px',
+            bgcolor: colors.successSoft,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mb: 2.5,
+          }}
+        >
+          <Mail size={24} color={colors.success} />
+        </Box>
 
-        <Typography variant="body2" color="text.secondary" textAlign="center">
-          Didn't receive the email?{' '}
-          <StyledButton
-            onClick={() => {
-              setIsSuccess(false);
-              setSubmittedEmail('');
-            }}
-          >
-            Try again
-          </StyledButton>
+        <Typography
+          sx={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontWeight: 800,
+            fontSize: 24,
+            color: colors.text,
+            mb: 1,
+          }}
+        >
+          Check your email
+        </Typography>
+        <Typography sx={{ fontSize: 14, color: colors.secondary, mb: 4, lineHeight: 1.7 }}>
+          We&apos;ve sent a password reset link to{' '}
+          <Box component="span" sx={{ color: colors.text, fontWeight: 600 }}>
+            {submittedEmail}
+          </Box>
+          . Please check your inbox and follow the instructions.
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" textAlign="center">
-          <StyledRouterLink to="/login">
+        <Button
+          fullWidth
+          onClick={() => {
+            setIsSuccess(false);
+            setSubmittedEmail('');
+          }}
+          sx={{
+            bgcolor: colors.cardAlt,
+            color: colors.text,
+            border: `1px solid ${colors.border}`,
+            fontWeight: 600,
+            fontSize: 14,
+            py: 1.35,
+            borderRadius: '12px',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.06)',
+              borderColor: colors.gold,
+            },
+            transition: 'all .2s',
+          }}
+        >
+          Try again
+        </Button>
+
+        <Typography
+          sx={{
+            fontSize: 13,
+            color: colors.secondary,
+            textAlign: 'center',
+            mt: 3,
+          }}
+        >
+          <RouterLink
+            to="/login"
+            style={{
+              color: colors.gold,
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
+          >
             Back to sign in
-          </StyledRouterLink>
+          </RouterLink>
         </Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box>
-        <Typography variant="h5" fontWeight={700} gutterBottom>
-          Forgot password?
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Enter your email and we'll send you a reset link
-        </Typography>
-      </Box>
+    <Box>
+      <Typography
+        sx={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: 28,
+          color: colors.text,
+          mb: 0.75,
+        }}
+      >
+        Forgot password?
+      </Typography>
+      <Typography sx={{ fontSize: 14, color: colors.secondary, mb: 4 }}>
+        Enter your email and we&apos;ll send you a reset link
+      </Typography>
 
       {error && (
-        <Alert severity="error" onClose={() => setError(null)}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2.5,
+            bgcolor: 'rgba(239,68,68,0.1)',
+            color: colors.error,
+            border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: '10px',
+            '& .MuiAlert-icon': { color: colors.error },
+          }}
+        >
           {error}
         </Alert>
       )}
 
-      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <FormTextField
-          label="Email"
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <AuthField
+          label="Email address"
           type="email"
-          placeholder="you@example.com"
-          fullWidth
+          value={emailValue}
+          onChange={(v) => setValue('email', v, { shouldValidate: true })}
+          placeholder="you@company.com"
+          error={errors.email?.message}
           autoComplete="email"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email')}
+          icon={<Mail size={16} />}
+          disabled={isSubmitting}
         />
 
-        <SubmitButton
+        <Button
           type="submit"
-          variant="contained"
           fullWidth
           disabled={isSubmitting}
+          endIcon={
+            isSubmitting ? (
+              <CircularProgress size={16} sx={{ color: '#0A0F18' }} />
+            ) : (
+              <ArrowRight size={18} />
+            )
+          }
+          sx={{
+            bgcolor: colors.gold,
+            color: '#0A0F18',
+            fontWeight: 800,
+            fontSize: 15,
+            py: 1.5,
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(216,164,65,0.3)',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: colors.goldHover,
+              boxShadow: '0 6px 24px rgba(216,164,65,0.4)',
+              transform: 'translateY(-1px)',
+            },
+            '&:active': { transform: 'translateY(0)' },
+            '&:disabled': { opacity: 0.6 },
+            transition: 'all .2s',
+          }}
         >
-          {isSubmitting ? (
-            <CircularProgress size={20} color="inherit" />
-          ) : (
-            'Send reset link'
-          )}
-        </SubmitButton>
-      </Form>
+          {isSubmitting ? 'Sending\u2026' : 'Send reset link'}
+        </Button>
+      </Box>
 
-      <Typography variant="body2" color="text.secondary" textAlign="center">
-        Remember your password?{' '}
-        <StyledRouterLink to="/login">
-          Sign in
-        </StyledRouterLink>
+      <Typography
+        sx={{
+          fontSize: 13,
+          color: colors.secondary,
+          textAlign: 'center',
+          mt: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+        }}
+      >
+        <ArrowLeft size={14} />
+        <RouterLink
+          to="/login"
+          style={{
+            color: colors.gold,
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          Back to sign in
+        </RouterLink>
       </Typography>
     </Box>
   );

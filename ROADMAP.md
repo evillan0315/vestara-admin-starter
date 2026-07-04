@@ -18,9 +18,9 @@ This roadmap defines the GitHub-based project structure, milestone organization,
 | Phase | Focus | Items | Status |
 |-------|-------|-------|--------|
 | **1–5** | Foundation & Backend | Project Init, Shared Architecture, Database, Express Server, Auth API | ✅ Complete |
-| **6–7** | Frontend Foundation | React Foundation, Design System | ⏳ Partial (~85%) |
+| **6–7** | Frontend Foundation | React Foundation, Design System, Auth Components | ✅ Complete |
 | **8–10** | Admin Dashboard | Dashboard Layout, Widgets, Dashboard Features | ⏳ Partial (~55%) |
-| **11** | Authentication UI | Login, Register, Forgot/Reset Password, Protected Routes | ✅ Complete |
+| **11** | Authentication UI | Login, Register, Forgot/Reset Password, OAuth (Google + GitHub), Protected Routes | ✅ Complete |
 | **12–14** | User Management | User CRUD, Roles & Permissions, User Profile | ❌ Not Started |
 | **15–17** | Reusable UI | Forms, Data Table, Feedback Components | ⏳ Partial (~60%) |
 | **18** | File Management | File Manager | ❌ Not Started |
@@ -315,17 +315,17 @@ Phases correspond to items in [`INSTRUCTION.md`](./INSTRUCTION.md). See the `doc
 | 2 | Shared Architecture | ✅ Complete | 100% | `@vestara/types`, `@vestara/constants`, `@vestara/validation`, `@vestara/utils`, `@vestara/config` packages fully implemented |
 | 3 | Database | ✅ Complete | 100% | Prisma Postgres (hosted PostgreSQL via `prisma postgres link`). Schema: User, Session, RefreshToken, AuditLog, SystemSetting. `prisma-client` generator v7.8.0 with `PrismaPg` adapter. Seed data (4 users, 5 system settings, audit log). `lib/prisma.ts` singleton. `scripts/verify-prisma.ts` verification. |
 | 4 | Express Server | ✅ Complete | 100% | Full middleware stack (CORS, security headers, body parser, request logger, validation, error handler, 404) |
-| 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging |
+| 5 | Authentication API | ✅ Complete | 100% | Register, login, refresh, logout, me — JWT access + refresh tokens, bcrypt hashing, audit logging. **OAuth 2.0:** Google + GitHub OAuth with backend-initiated flow, find-or-create user logic, provider linking for existing email accounts. Backend routes: `/auth/oauth/google`, `/auth/oauth/github` (redirect + callback). Prisma schema updated: `passwordHash` optional, `provider`/`providerId` fields with compound unique constraint. |
 | 6 | React Foundation | ✅ Complete | 100% | Vite + MUI + TanStack Query + routing + API client + auth context + route guards + feature-based module structure |
 | 7 | Design System | ✅ Complete | 100% | MUI light/dark themes + Tailwind integrated. **UI Components (17):** Button, Input, Select, Textarea, Checkbox (+CheckboxGroup), Radio (+RadioGroup), Switch (+SwitchGroup), Card, Modal, ConfirmDialog, Drawer, Sidebar, Badge, Avatar (+AvatarGroup), Tooltip, Tabs (+TabPanel), Breadcrumb, Typography (Heading, Subheading, Paragraph, Caption, Label). **Data:** StatCard, ActivityFeed. **Feedback:** Toast, Loading, EmptyState. **Layout:** Header, Footer, Sidebar. |
 | 8 | Dashboard Layout | ✅ Complete | 100% | Sidebar (collapsible), Header (search, notifications, theme toggle, user menu), Footer, RootLayout integrated. Dashboard page with 4 StatCards (Total Users, Revenue, Orders, Growth), Revenue Overview chart placeholder, Activity Feed with mock data. Route pages: `/` (Dashboard), `/analytics`, `/users`, `/settings`, `/admin` |
 | 9 | Dashboard Widgets | ⏳ Partial | ~55% | **Built:** StatCard (with trend indicators, icons, change percentages), ActivityFeed (with user avatars, timestamps, action types). Both integrated into DashboardPage with mock data. **Missing:** KPI cards, charts integration, real data wiring from API |
 | 10 | Dashboard Features | ❌ Not Started | 0% | No global search, notifications, preferences, audit logs UI, analytics |
-| 11 | Authentication Pages | ✅ Complete | 100% | Login, Register, Forgot Password, Reset Password pages with forms. AuthLayout (centered card with logo). react-hook-form + zod validation. AuthContext integration. Route guards (ProtectedRoute, PublicRoute). |
+| 11 | Authentication Pages | ✅ Complete | 100% | Login, Register, Forgot Password, Reset Password pages with Vestara Elite design. AuthLayout with left brand panel (geometric backgrounds, gold/purple orbs, hero text, stats, testimonial) + right form panel. Custom AuthField component with icon, label, error state, password toggle. OAuthButtons (Google + GitHub). PasswordStrength indicator. OAuth callback page (`/auth/callback`). AuthContext with `oauthRedirect` + `handleOAuthCallback`. react-hook-form + zod validation. Route guards (ProtectedRoute, PublicRoute). Plus Jakarta Sans font. |
 | 12 | User CRUD | ❌ Not Started | 0% | Backend repository exists but routes are not wired. No frontend. |
 | 13 | Roles & Permissions | ❌ Not Started | 0% | UserRole enum defined. No role/permission management UI or API |
 | 14 | User Profile | ❌ Not Started | 0% | No profile, password, or avatar management |
-| 15 | Reusable Forms | ❌ Not Started | 0% | No reusable form components or form utilities |
+| 15 | Reusable Forms | ⏳ Partial | ~25% | **Auth components built:** AuthField (custom input with icon, label, error, password toggle), OAuthButtons (Google + GitHub), PasswordStrength (4-bar indicator). **Missing:** Generic form components, form utilities, reusable form layouts |
 | 16 | Data Table | ❌ Not Started | 0% | No data table with sorting, filtering, pagination, selection |
 | 17 | Feedback Components | ⏳ Partial | ~60% | **Built:** Toast/Snackbar (with ToastProvider + useToast hook), Loading (spinner/skeleton/overlay/inline + PageLoading, ContentLoading, ButtonLoading), EmptyState (NoData, NoSearchResults, EmptyFolder, ErrorState). **Missing:** Confirmation dialogs integration, toast queue management |
 | 18 | File Manager | ❌ Not Started | 0% | No upload, browse, preview, download |

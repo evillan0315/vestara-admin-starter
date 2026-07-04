@@ -5,56 +5,41 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Box,
   Typography,
-  TextField,
   Button,
   Alert,
   CircularProgress,
-  Grid,
-  styled,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
+import { User, Mail, Lock, ArrowRight, Check } from 'lucide-react';
 import { registerSchema, type RegisterInput } from '@vestara/validation';
 import { useAuth } from '../features/auth/AuthContext';
+import AuthField from '../components/auth/AuthField';
+import OAuthButtons from '../components/auth/OAuthButtons';
+import PasswordStrength from '../components/auth/PasswordStrength';
+import { colors } from '../theme/tokens';
 
-const Form = styled('form')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3),
-}));
-
-const FormTextField = styled(TextField)(() => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 8,
-  },
-}));
-
-const SubmitButton = styled(Button)(() => ({
-  borderRadius: 8,
-  padding: '10px 24px',
-  textTransform: 'none',
-  fontSize: '0.95rem',
-  fontWeight: 600,
-}));
-
-const StyledRouterLink = styled(RouterLink)(() => ({
-  textDecoration: 'none',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  color: 'inherit',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-}));
+const perks = [
+  'Access to all companion management tools',
+  'Real-time booking and scheduling',
+  'Advanced analytics and reporting',
+  'Secure payment processing',
+];
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, oauthRedirect } = useAuth();
+
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [termsError, setTermsError] = useState<string | null>(null);
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -65,7 +50,17 @@ export function RegisterPage() {
     },
   });
 
+  const firstNameValue = watch('firstName');
+  const lastNameValue = watch('lastName');
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
+
   const onSubmit = async (data: RegisterInput) => {
+    if (!agreeTerms) {
+      setTermsError('You must accept the terms to continue.');
+      return;
+    }
+    setTermsError(null);
     setError(null);
     setIsSubmitting(true);
     try {
@@ -87,97 +82,253 @@ export function RegisterPage() {
     }
   };
 
+  const handleOAuth = (provider: 'google' | 'github') => {
+    oauthRedirect(provider);
+  };
+
+  const isLoading = isSubmitting;
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3,
-      }}
-    >
-      <Box>
-        <Typography variant="h5" fontWeight={700} gutterBottom>
-          Create account
+    <Box>
+      <Typography
+        sx={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: 28,
+          color: colors.text,
+          mb: 0.75,
+        }}
+      >
+        Create your account
+      </Typography>
+      <Typography sx={{ fontSize: 14, color: colors.secondary, mb: 3 }}>
+        Already have an account?{' '}
+        <Typography
+          component={RouterLink}
+          to="/login"
+          sx={{
+            color: colors.gold,
+            fontWeight: 600,
+            textDecoration: 'none',
+            display: 'inline',
+            '&:hover': { color: colors.goldHover },
+          }}
+        >
+          Sign in
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Enter your details to get started
-        </Typography>
+      </Typography>
+
+      {/* Perk list */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 0.75,
+          mb: 3,
+        }}
+      >
+        {perks.map((p) => (
+          <Box key={p} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+            <Box
+              sx={{
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                bgcolor: colors.successSoft,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                mt: '1px',
+              }}
+            >
+              <Check size={9} color={colors.success} strokeWidth={3} />
+            </Box>
+            <Typography
+              sx={{ fontSize: 12, color: colors.secondary, lineHeight: 1.5 }}
+            >
+              {p}
+            </Typography>
+          </Box>
+        ))}
       </Box>
 
       {error && (
-        <Alert severity="error" onClose={() => setError(null)}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2.5,
+            bgcolor: 'rgba(239,68,68,0.1)',
+            color: colors.error,
+            border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: '10px',
+            '& .MuiAlert-icon': { color: colors.error },
+          }}
+        >
           {error}
         </Alert>
       )}
 
-      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 6 }}>
-            <FormTextField
-              label="First name"
-              placeholder="John"
-              fullWidth
-              autoComplete="given-name"
-              error={!!errors.firstName}
-              helperText={errors.firstName?.message}
-              {...register('firstName')}
-            />
-          </Grid>
-          <Grid size={{ xs: 6 }}>
-            <FormTextField
-              label="Last name"
-              placeholder="Doe"
-              fullWidth
-              autoComplete="family-name"
-              error={!!errors.lastName}
-              helperText={errors.lastName?.message}
-              {...register('lastName')}
-            />
-          </Grid>
-        </Grid>
+      <OAuthButtons
+        onGoogle={() => handleOAuth('google')}
+        onGitHub={() => handleOAuth('github')}
+        loading={isLoading}
+        label="sign up"
+      />
 
-        <FormTextField
-          label="Email"
+      <Box sx={{ my: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ flex: 1, height: 1, bgcolor: colors.border }} />
+        <Typography sx={{ fontSize: 12, color: colors.muted }}>
+          or sign up with email
+        </Typography>
+        <Box sx={{ flex: 1, height: 1, bgcolor: colors.border }} />
+      </Box>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        {/* Two-column row for name */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
+          <AuthField
+            label="First name"
+            value={firstNameValue}
+            onChange={(v) => setValue('firstName', v, { shouldValidate: true })}
+            placeholder="John"
+            error={errors.firstName?.message}
+            autoComplete="given-name"
+            icon={<User size={16} />}
+            disabled={isLoading}
+          />
+          <AuthField
+            label="Last name"
+            value={lastNameValue}
+            onChange={(v) => setValue('lastName', v, { shouldValidate: true })}
+            placeholder="Doe"
+            error={errors.lastName?.message}
+            autoComplete="family-name"
+            icon={<User size={16} />}
+            disabled={isLoading}
+          />
+        </Box>
+
+        <AuthField
+          label="Email address"
           type="email"
-          placeholder="you@example.com"
-          fullWidth
+          value={emailValue}
+          onChange={(v) => setValue('email', v, { shouldValidate: true })}
+          placeholder="you@company.com"
+          error={errors.email?.message}
           autoComplete="email"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email')}
+          icon={<Mail size={16} />}
+          disabled={isLoading}
         />
 
-        <FormTextField
+        <AuthField
           label="Password"
           type="password"
-          placeholder="Create a password"
-          fullWidth
+          value={passwordValue}
+          onChange={(v) => setValue('password', v, { shouldValidate: true })}
+          placeholder="At least 8 characters"
+          error={errors.password?.message}
           autoComplete="new-password"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register('password')}
+          icon={<Lock size={16} />}
+          disabled={isLoading}
         />
+        <PasswordStrength password={passwordValue} />
 
-        <SubmitButton
+        <FormControlLabel
+          sx={{
+            mb: termsError ? 0.5 : 2,
+            mt: 0.5,
+            alignItems: 'flex-start',
+          }}
+          control={
+            <Checkbox
+              checked={agreeTerms}
+              onChange={(e) => {
+                setAgreeTerms(e.target.checked);
+                if (e.target.checked) setTermsError(null);
+              }}
+              disabled={isLoading}
+              size="small"
+              sx={{
+                color: termsError ? colors.error : colors.border,
+                '&.Mui-checked': { color: colors.gold },
+                mt: '-2px',
+              }}
+            />
+          }
+          label={
+            <Typography
+              sx={{ fontSize: 12.5, color: colors.secondary, lineHeight: 1.6 }}
+            >
+              I agree to Vestara&apos;s{' '}
+              <Box
+                component="a"
+                href="#"
+                sx={{
+                  color: colors.gold,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
+                Terms of Service
+              </Box>{' '}
+              and{' '}
+              <Box
+                component="a"
+                href="#"
+                sx={{
+                  color: colors.gold,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
+                Privacy Policy
+              </Box>
+              . Your data is handled with strict confidentiality.
+            </Typography>
+          }
+        />
+        {termsError && (
+          <Typography
+            sx={{ fontSize: 12, color: colors.error, mb: 2, ml: 0.5 }}
+          >
+            {termsError}
+          </Typography>
+        )}
+
+        <Button
           type="submit"
-          variant="contained"
           fullWidth
-          disabled={isSubmitting}
+          disabled={isLoading}
+          endIcon={
+            isLoading ? (
+              <CircularProgress size={16} sx={{ color: '#0A0F18' }} />
+            ) : (
+              <ArrowRight size={18} />
+            )
+          }
+          sx={{
+            bgcolor: colors.gold,
+            color: '#0A0F18',
+            fontWeight: 800,
+            fontSize: 15,
+            py: 1.5,
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(216,164,65,0.3)',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: colors.goldHover,
+              boxShadow: '0 6px 24px rgba(216,164,65,0.4)',
+              transform: 'translateY(-1px)',
+            },
+            '&:active': { transform: 'translateY(0)' },
+            '&:disabled': { opacity: 0.6 },
+            transition: 'all .2s',
+          }}
         >
-          {isSubmitting ? (
-            <CircularProgress size={20} color="inherit" />
-          ) : (
-            'Create account'
-          )}
-        </SubmitButton>
-      </Form>
-
-      <Typography variant="body2" color="text.secondary" textAlign="center">
-        Already have an account?{' '}
-        <StyledRouterLink to="/login">
-          Sign in
-        </StyledRouterLink>
-      </Typography>
+          {isLoading ? 'Creating account\u2026' : 'Create account'}
+        </Button>
+      </Box>
     </Box>
   );
 }

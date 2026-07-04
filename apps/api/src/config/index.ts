@@ -12,6 +12,9 @@ interface Config {
     host: string;
     url: string;
   };
+  client: {
+    url: string;
+  };
   database: {
     url: string;
   };
@@ -23,6 +26,18 @@ interface Config {
     refreshSecret: string;
     expiresIn: string;
     refreshExpiresIn: string;
+  };
+  oauth: {
+    google: {
+      clientId: string;
+      clientSecret: string;
+      callbackUrl: string;
+    };
+    github: {
+      clientId: string;
+      clientSecret: string;
+      callbackUrl: string;
+    };
   };
   smtp: {
     host: string;
@@ -50,6 +65,9 @@ export const config: Config = {
     host: '0.0.0.0',
     url: process.env.API_URL || 'http://localhost:5000',
   },
+  client: {
+    url: process.env.CLIENT_URL || process.env.CORS_ORIGIN || 'http://localhost:5173',
+  },
   database: {
     url: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/vestara_admin',
   },
@@ -61,6 +79,18 @@ export const config: Config = {
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-jwt-refresh-secret-change-in-production',
     expiresIn: process.env.JWT_EXPIRES_IN || '15m',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
+  },
+  oauth: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      callbackUrl: process.env.GOOGLE_CALLBACK_URL || `${process.env.API_URL || 'http://localhost:5000'}/api/v1/auth/oauth/google/callback`,
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID || '',
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+      callbackUrl: process.env.GITHUB_CALLBACK_URL || `${process.env.API_URL || 'http://localhost:5000'}/api/v1/auth/oauth/github/callback`,
+    },
   },
   smtp: {
     host: process.env.SMTP_HOST || '',
